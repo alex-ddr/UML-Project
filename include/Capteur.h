@@ -3,7 +3,7 @@
 using namespace std;
 
 #include <string>
-
+#include "Mesures.h"
 class Capteur
 {
 private:
@@ -12,11 +12,14 @@ private:
   float longitude;
   bool confiance;
   bool prive;
+  Mesures liste_mesures[];
 
 public:
   // Constructor
   Capteur(long id, float lat, float lon, bool conf, bool priv)
-      : capteur_id(id), latitude(lat), longitude(lon), confiance(conf), prive(priv) {}
+      : capteur_id(id), latitude(lat), longitude(lon), confiance(conf), prive(priv)
+  {
+  }
 
   // Méthodes
   bool estCapteurDeConfiance();

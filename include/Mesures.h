@@ -1,5 +1,5 @@
-#ifndef CAPTEUR_H
-#define CAPTEUR_H
+#ifndef MESURES_H
+#define MESURES_H
 using namespace std;
 
 #include <ctime>
