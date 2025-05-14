@@ -5,70 +5,73 @@
 
 using namespace std;
 
-float Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
+map<string, float> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
-    if (liste_capteurs.empty())
-        return -1;
+    map<string, float> moyennesParGaz={
+        {"O3", 0.0},
+        {"SO2", 0.0},
+        {"NO2", 0.0},
+        {"PM10", 0.0}
+    };
 
-    int nbCapteurs = 0;
+    string gaz[4]= {"O3", "SO2", "NO2", "PM10"};
+    int nbCapteurs[4] ={0};
     float moyennesTotales[4] ={0};
 
-    if (fin) // cas de la période temporelle
-    {
-        for (const Capteur& c: liste_capteurs)
-        {
-            ++nbCapteurs;
-            float moyennes[4] ={0};
-            int nbMesures[4]={0};
-            
-            for (const Mesures& m: c.getListeMesures())
-                
-                if(debut<m.getTimestamp() && m.getTimestamp() <fin)
-                {
-                    if ( m.getAttribut().attribut_id == "O3")
-                    {
-                        moyennes[0] += m.getValeur();
-                        ++nbMesures[0];
-                    }
-                    else if ( m.getAttribut().attribut_id == "SO2")
-                    {
-                        moyennes[1]+= m.getValeur();
-                        ++nbMesures[1];
-                    }
-                    else if ( m.getAttribut().attribut_id == "NO2")
-                    {
-                        moyennes[2]+= m.getValeur();
-                        ++nbMesures[2];
-                    }
-                    else if ( m.getAttribut().attribut_id == "PM10")
-                    {
-                        moyennes[3]+= m.getValeur();
-                        ++nbMesures[3];
-                    }
-                }
 
-                for (int i =0; i<4; ++i){
-                    if (moyennes[i]!=0){
-                        moyennes[i]/=nbMesures[i];
-                        moyennesTotales[i]+=moyennes[i];
-                    }
-                }
-        }
-    }
-    else // cas du jour spécifié
+    if (!fin) {fin=debut+24*3600;} // si pas de fin définie, alors par défaut la fin est le jour de début + 1
+    
+    for (const Capteur& c: liste_capteurs)
     {
-        for (const Capteur& c: liste_capteurs)
-        {
-            if (c.getListeMesures().size() > 1)
+        
+        float moyennes[4] ={0};
+        int nbMesures[4]={0};
+        
+        for (const Mesures& m: c.getListeMesures()){
+            
+
+            if(debut<m.getTimestamp() && m.getTimestamp() <fin)
             {
-                
+                if ( m.getAttribut().attribut_id == "O3")
+                {
+                    moyennes[0] += m.getValeur();
+                    ++nbMesures[0];
+                    ++nbCapteurs[0];
+                }
+                else if ( m.getAttribut().attribut_id == "SO2")
+                {
+                    moyennes[1]+= m.getValeur();
+                    ++nbMesures[1];
+                    ++nbCapteurs[1];
+                }
+                else if ( m.getAttribut().attribut_id == "NO2")
+                {
+                    moyennes[2]+= m.getValeur();
+                    ++nbMesures[2];
+                    ++nbCapteurs[2];
+                }
+                else if ( m.getAttribut().attribut_id == "PM10")
+                {
+                    moyennes[3]+= m.getValeur();
+                    ++nbMesures[3];
+                    ++nbCapteurs[3];
+                }
             }
 
-
+            for (int i =0; i<4; ++i){
+                if (moyennes[i]!=0){
+                    moyennes[i]/=nbMesures[i];
+                    moyennesTotales[i]+=moyennes[i];
+                }
+            }
         }
-
     }
-    return 0;
+
+    for (int i =0; i<4; ++i){
+        moyennesTotales[i]/=nbCapteurs[i];
+        moyennesParGaz[gaz[i]] = moyennesTotales[i];
+    }
+    return moyennesParGaz;
 }
 
 

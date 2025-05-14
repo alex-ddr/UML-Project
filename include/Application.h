@@ -3,6 +3,7 @@
 #include <ctime>
 #include <vector>
 #include <utility>
+#include <map>
 #include "Capteur.h"
 #include "Utilisateur.h"
 
@@ -23,7 +24,7 @@ public:
     ~Application() {}
 
     // Méthodes
-    float moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const;
+    map<string, float>  moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const;
     float estimerQualiteAir(float latitude, float longitude) const;
     vector<pair<Capteur, float>> listerCapteursSimilaires(Capteur &capteur) const;
     void ajouterPointUtilisateur(Utilisateur &user) const;
