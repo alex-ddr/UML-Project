@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include "include\Application.h"
+
 using namespace std;
 
 void afficherMenuGouvernement()
@@ -53,7 +55,7 @@ int main()
     int choix = 0;
     do
     {
-        if (role == "GOUVERNEMENT")
+        if (role == "GOUVERNEMENT" || role == "g")
         {
             afficherMenuGouvernement();
             cout << "> ";
@@ -61,8 +63,10 @@ int main()
             switch (choix)
             {
             case 1:
+            {
                 cout << "-> Moyenne dans une zone (GOUVERNEMENT)" << endl;
                 break;
+            }
             case 2:
                 cout << "-> Estimation au point (GOUVERNEMENT)" << endl;
                 break;
@@ -83,7 +87,7 @@ int main()
                 break;
             }
         }
-        else if (role == "UTILISATEUR")
+        else if (role == "UTILISATEUR" || role == "u")
         {
             afficherMenuUtilisateur();
             cout << "> ";
@@ -110,7 +114,7 @@ int main()
                 break;
             }
         }
-        else if (role == "ADMIN")
+        else if (role == "ADMIN" || role == "a")
         {
             afficherMenuAdmin();
             cout << "> ";

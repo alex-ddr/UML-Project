@@ -59,16 +59,16 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
             }
 
             for (int i =0; i<4; ++i){
-                if (moyennes[i]!=0){
-                    moyennes[i]/=nbMesures[i];
-                    moyennesTotales[i]+=moyennes[i];
+                if (nbMesures[i] > 0) {
+                moyennes[i] /= nbMesures[i];
+                moyennesTotales[i] += moyennes[i];
                 }
             }
         }
     }
 
     for (int i =0; i<4; ++i){
-        moyennesTotales[i]/=nbCapteurs[i];
+        if (nbCapteurs[i]>0) moyennesTotales[i]/=nbCapteurs[i];
         moyennesParGaz[gaz[i]] = moyennesTotales[i];
     }
     return moyennesParGaz;
@@ -78,7 +78,7 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
 {
     // 1. Date la plus récente dans toutes les mesures
     vector<Mesures> liste_mesures_capteur = capteur.getListeMesures();
-    time_t date_max = NULL;
+    time_t date_max = 0;
     for (const Mesures &mesure : liste_mesures_capteur)
         if (!date_max || date_max < mesure.getTimestamp())
             date_max = mesure.getTimestamp();
