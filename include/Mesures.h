@@ -28,6 +28,13 @@ public:
   void setValeur(float valeur) { this->valeur = valeur; }
   void setAttribut(Attribut attribut) { this->attribut = attribut; }
 
+  // Overload the == operator
+  bool operator==(const Mesures &other) const
+  {
+    return (timestamp == other.timestamp &&
+            valeur == other.valeur &&
+            attribut == other.attribut);
+  }
   // Destructor
   ~Mesures() {}
 };
