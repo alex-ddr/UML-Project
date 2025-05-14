@@ -14,28 +14,26 @@ float Application::moyenneQualiteAir(float latitude, float longitude, time_t deb
 
     if (debut && fin)
     {
-        for (const Capteur& c: listeCapteurs)
+        for (const Capteur &c : listeCapteurs)
         {
             ++nbCapteurs;
-            float moyenneCapteurs=0;
-            int nbMesures=0;
-            
+            float moyenneCapteurs = 0;
+            int nbMesures = 0;
+
             // for (const Mesures& m: c.getListeMesures())
-                
+
             //     if(debut<m.getTimestamp & m.getTimestamp)
-
-
         }
     }
     return 0;
 }
 
-Capteur *Application::listerCapteursSimilaires(Capteur &capteur) const
+vector<Capteur> Application::listerCapteursSimilaires(Capteur &capteur) const
 {
     // 1. Date la plus récente dans toutes les mesures
     vector<Mesures> liste_mesures_capteur = capteur.getListeMesures();
     time_t date_max = NULL;
-    for (const auto &mesure : liste_mesures_capteur)
+    for (const Mesures &mesure : liste_mesures_capteur)
         if (!date_max || date_max < mesure.getTimestamp())
             date_max = mesure.getTimestamp();
 
@@ -50,4 +48,8 @@ Capteur *Application::listerCapteursSimilaires(Capteur &capteur) const
 
     // 4. Liste vide
     vector<Capteur> capteurs_similaires;
+
+    // 5. Itération sur tous les capteurs
+    // for (const Capteur &capteur_autre :)
+    return capteurs_similaires;
 }

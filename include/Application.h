@@ -9,19 +9,32 @@ using namespace std;
 
 class Application
 {
+private:
+    vector<Capteur> listeCapteurs;
+
 public:
+    // Constructeur
+    Application() {}
+    Application(const vector<Capteur> &listeCapteurs)
+        : listeCapteurs(listeCapteurs) {}
+
+    // Déstructeur
+    ~Application() {}
+
+    // Méthodes
     float moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const;
     float estimerQualiteAir(float latitude, float longitude) const;
-    vector<Capteur> listerCapteursSimilaires(Capteur capteur) const;
-    void ajouterPointUtilisateur(Utilisateur user) const;
+    vector<Capteur> listerCapteursSimilaires(Capteur &capteur) const;
+    void ajouterPointUtilisateur(Utilisateur &user) const;
     void analyserCapteurPrive() const;
     void mesurerAlgorithme() const;
     void ajouterCapteur();
     void faireMaintenance();
     Personne authentifier(string identifiant, string mdp);
 
-private:
-    vector<Capteur> listeCapteurs;
-    int taille;
-    string identifiant;
+    // Getters
+    vector<Capteur> getListeCapteurs() const { return listeCapteurs; }
+
+    // Setters
+    void setListeCapteurs(const vector<Capteur> &nouvelleListeCapteurs) { listeCapteurs = nouvelleListeCapteurs; }
 };
