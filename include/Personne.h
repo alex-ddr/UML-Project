@@ -10,7 +10,7 @@ class Personne
 protected:
     string id;
     string nom;
-    Capteur liste_capteurs[];
+    Capteur *liste_capteurs;
 
 public:
     Personne(string id, string nom);

@@ -14,20 +14,21 @@ private:
 
 public:
   // Constructors
-  Mesures();
-  Mesures(time_t timestamp, float valeur, Attribut attribut);
+  Mesures() : timestamp(0), valeur(0.0), attribut() {}
+  Mesures(time_t timestamp, float valeur, Attribut attribut)
+      : timestamp(timestamp), valeur(valeur), attribut(attribut) {}
 
   // Getters
-  time_t getTimestamp() const;
-  float getValeur() const;
-  Attribut getAttribut() const;
+  time_t getTimestamp() const { return timestamp; }
+  float getValeur() const { return valeur; }
+  Attribut getAttribut() const { return attribut; }
 
   // Setters
-  void setTimestamp(time_t timestamp);
-  void setValeur(float valeur);
-  void setAttribut(Attribut attribut);
+  void setTimestamp(time_t timestamp) { this->timestamp = timestamp; }
+  void setValeur(float valeur) { this->valeur = valeur; }
+  void setAttribut(Attribut attribut) { this->attribut = attribut; }
 
   // Destructor
-  ~Mesures();
+  ~Mesures() {}
 };
 #endif

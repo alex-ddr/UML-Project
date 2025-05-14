@@ -4,6 +4,7 @@ using namespace std;
 
 #include <string>
 #include "Mesures.h"
+#include <vector>
 class Capteur
 {
 private:
@@ -12,7 +13,7 @@ private:
   float longitude;
   bool confiance;
   bool prive;
-  Mesures liste_mesures[];
+  vector<Mesures> liste_mesures;
 
 public:
   // Constructor
@@ -30,6 +31,7 @@ public:
   float getLongitude() const { return longitude; }
   bool isConfiance() const { return confiance; }
   bool isPrive() const { return prive; }
+  vector<Mesures> getListeMesures() const { return liste_mesures; }
 
   // Setters
   void setCapteurId(long id) { capteur_id = id; }
