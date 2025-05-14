@@ -10,13 +10,13 @@ using namespace std;
 class Application
 {
 private:
-    vector<Capteur> listeCapteurs;
+    vector<Capteur> liste_capteurs;
 
 public:
     // Constructeur
     Application() {}
-    Application(const vector<Capteur> &listeCapteurs)
-        : listeCapteurs(listeCapteurs) {}
+    Application(const vector<Capteur> &liste_capteurs)
+        : liste_capteurs(liste_capteurs) {}
 
     // Déstructeur
     ~Application() {}
@@ -33,8 +33,8 @@ public:
     Personne authentifier(string identifiant, string mdp);
 
     // Getters
-    vector<Capteur> getListeCapteurs() const { return listeCapteurs; }
+    vector<Capteur> getListeCapteurs() const { return liste_capteurs; }
 
     // Setters
-    void setListeCapteurs(const vector<Capteur> &nouvelleListeCapteurs) { listeCapteurs = nouvelleListeCapteurs; }
+    void setListeCapteurs(const vector<Capteur> &liste_capteurs) { this->liste_capteurs = liste_capteurs; }
 };

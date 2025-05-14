@@ -50,6 +50,6 @@ vector<Capteur> Application::listerCapteursSimilaires(Capteur &capteur) const
     vector<Capteur> capteurs_similaires;
 
     // 5. Itération sur tous les capteurs
-    // for (const Capteur &capteur_autre :)
-    return capteurs_similaires;
+    for (const Capteur &capteur_autre : liste_capteurs)
+        return capteurs_similaires;
 }
