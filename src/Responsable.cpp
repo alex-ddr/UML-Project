@@ -1,11 +1,6 @@
-using namespace std;
-#include "Personne.cpp"
-#include <iostream>
-#include <string>
+#include "Responsable.h"
 
-class Responsable : public Personne
-{
-public:
-    Responsable(string id, string str) : Personne(id, str) {}
-    ~Responsable() {}
-};
+Responsable::Responsable(std::string id, std::string nom)
+    : Personne(id, nom) {}
+
+Responsable::~Responsable() {}
