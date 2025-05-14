@@ -7,27 +7,70 @@ using namespace std;
 
 float Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
-    if (listeCapteurs.empty())
+    if (liste_capteurs.empty())
         return -1;
 
     int nbCapteurs = 0;
-    float moyenneTotale = 0;
+    float moyennesTotales[4] ={0};
 
-    if (debut && fin)
+    if (fin) // cas de la période temporelle
     {
-        for (const Capteur &c : listeCapteurs)
+        for (const Capteur& c: liste_capteurs)
         {
             ++nbCapteurs;
-            float moyenneCapteurs = 0;
-            int nbMesures = 0;
+            float moyennes[4] ={0};
+            int nbMesures[4]={0};
+            
+            for (const Mesures& m: c.getListeMesures())
+                
+                if(debut<m.getTimestamp() && m.getTimestamp() <fin)
+                {
+                    if ( m.getAttribut().attribut_id == "O3")
+                    {
+                        moyennes[0] += m.getValeur();
+                        ++nbMesures[0];
+                    }
+                    else if ( m.getAttribut().attribut_id == "SO2")
+                    {
+                        moyennes[1]+= m.getValeur();
+                        ++nbMesures[1];
+                    }
+                    else if ( m.getAttribut().attribut_id == "NO2")
+                    {
+                        moyennes[2]+= m.getValeur();
+                        ++nbMesures[2];
+                    }
+                    else if ( m.getAttribut().attribut_id == "PM10")
+                    {
+                        moyennes[3]+= m.getValeur();
+                        ++nbMesures[3];
+                    }
+                }
 
-            // for (const Mesures& m: c.getListeMesures())
-
-            //     if(debut<m.getTimestamp & m.getTimestamp)
+                for (int i =0; i<4; ++i){
+                    if (moyennes[i]!=0){
+                        moyennes[i]/=nbMesures[i];
+                        moyennesTotales[i]+=moyennes[i];
+                    }
+                }
         }
+    }
+    else // cas du jour spécifié
+    {
+        for (const Capteur& c: liste_capteurs)
+        {
+            if (c.getListeMesures().size() > 1)
+            {
+                
+            }
+
+
+        }
+
     }
     return 0;
 }
+
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
 {

@@ -6,7 +6,7 @@ using namespace std;
 
 struct Attribut
 {
-  long attribut_id;
+  string attribut_id;
   string unit;
   string description;
 };
