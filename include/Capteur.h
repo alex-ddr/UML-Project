@@ -40,6 +40,16 @@ public:
   void setConfiance(bool conf) { confiance = conf; }
   void setPrive(bool priv) { prive = priv; }
 
+  bool operator==(const Capteur &other) const
+  {
+    return capteur_id == other.capteur_id &&
+           latitude == other.latitude &&
+           longitude == other.longitude &&
+           confiance == other.confiance &&
+           prive == other.prive &&
+           liste_mesures == other.liste_mesures;
+  }
+
   // Destructor
   ~Capteur() {}
 };
