@@ -74,7 +74,6 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
     return moyennesParGaz;
 }
 
-
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
 {
     // 1. Date la plus récente dans toutes les mesures
@@ -146,4 +145,13 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
          });
 
     return capteurs_similaires;
+}
+
+void Application::ajouterCapteur()
+{
+    // Lit le csv Sensor.csv
+    // Crée un capteur
+    // Ajoute le capteur à la liste de capteurs
+
+    return;
 }
