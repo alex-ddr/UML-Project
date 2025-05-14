@@ -1,14 +1,13 @@
-#include <iostream>
-#include <cstring>
 #include "Application.h"
 
 using namespace std;
 
-float Application::moyenneQualiteAir(float lat, float longitude, Date debut, Date fin, float perimetre) const
+float Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
-    if (listeCapteurs==NULL) {return -1;}
-    
+    if (listeCapteurs == NULL)
+        return -1;
+
     int nbCapteurs = 0;
-    int moyenneTotale =0;
-    for (int i=0; )
+    int moyenneTotale = 0;
+    return 0;
 }
