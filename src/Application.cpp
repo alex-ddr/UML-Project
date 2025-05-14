@@ -14,12 +14,15 @@ float Application::moyenneQualiteAir(float latitude, float longitude, time_t deb
 
     if (debut && fin)
     {
-        for (const int i=0; i<taille; ++i)
+        for (const Capteur& c: listeCapteurs)
         {
             ++nbCapteurs;
             float moyenneCapteurs=0;
             int nbMesures=0;
-
+            
+            // for (const Mesures& m: c.getListeMesures())
+                
+            //     if(debut<m.getTimestamp & m.getTimestamp)
 
 
         }
