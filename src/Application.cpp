@@ -11,66 +11,63 @@ float Application::moyenneQualiteAir(float latitude, float longitude, time_t deb
         return -1;
 
     int nbCapteurs = 0;
-    float moyennesTotales[4] ={0};
+    float moyennesTotales[4] = {0};
 
     if (fin) // cas de la période temporelle
     {
-        for (const Capteur& c: liste_capteurs)
+        for (const Capteur &c : liste_capteurs)
         {
             ++nbCapteurs;
-            float moyennes[4] ={0};
-            int nbMesures[4]={0};
-            
-            for (const Mesures& m: c.getListeMesures())
-                
-                if(debut<m.getTimestamp() && m.getTimestamp() <fin)
+            float moyennes[4] = {0};
+            int nbMesures[4] = {0};
+
+            for (const Mesures &m : c.getListeMesures())
+
+                if (debut < m.getTimestamp() && m.getTimestamp() < fin)
                 {
-                    if ( m.getAttribut().attribut_id == "O3")
+                    if (m.getAttribut().attribut_id == "O3")
                     {
                         moyennes[0] += m.getValeur();
                         ++nbMesures[0];
                     }
-                    else if ( m.getAttribut().attribut_id == "SO2")
+                    else if (m.getAttribut().attribut_id == "SO2")
                     {
-                        moyennes[1]+= m.getValeur();
+                        moyennes[1] += m.getValeur();
                         ++nbMesures[1];
                     }
-                    else if ( m.getAttribut().attribut_id == "NO2")
+                    else if (m.getAttribut().attribut_id == "NO2")
                     {
-                        moyennes[2]+= m.getValeur();
+                        moyennes[2] += m.getValeur();
                         ++nbMesures[2];
                     }
-                    else if ( m.getAttribut().attribut_id == "PM10")
+                    else if (m.getAttribut().attribut_id == "PM10")
                     {
-                        moyennes[3]+= m.getValeur();
+                        moyennes[3] += m.getValeur();
                         ++nbMesures[3];
                     }
                 }
 
-                for (int i =0; i<4; ++i){
-                    if (moyennes[i]!=0){
-                        moyennes[i]/=nbMesures[i];
-                        moyennesTotales[i]+=moyennes[i];
-                    }
+            for (int i = 0; i < 4; ++i)
+            {
+                if (moyennes[i] != 0)
+                {
+                    moyennes[i] /= nbMesures[i];
+                    moyennesTotales[i] += moyennes[i];
                 }
+            }
         }
     }
     else // cas du jour spécifié
     {
-        for (const Capteur& c: liste_capteurs)
+        for (const Capteur &c : liste_capteurs)
         {
             if (c.getListeMesures().size() > 1)
             {
-                
             }
-
-
         }
-
     }
     return 0;
 }
-
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
 {
@@ -143,4 +140,13 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
          });
 
     return capteurs_similaires;
+}
+
+void Application::ajouterCapteur()
+{
+    // Lit le csv Sensor.csv
+    // Crée un capteur
+    // Ajoute le capteur à la liste de capteurs
+
+    return;
 }
