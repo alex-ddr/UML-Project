@@ -18,6 +18,7 @@ public:
     void mesurerAlgorithme() const;
     void ajouterCapteur();
     void faireMaintenance();
+    void remplirCapteur();
     Personne authentifier(string identifiant, string mdp);
 
 private:
