@@ -1,30 +1,39 @@
 # Répertoires
 INCLUDES = -Iinclude
 SRC_DIR = src
-OBJ_DIR = build
 
 # Compilateur
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 $(INCLUDES)
 
-# Fichiers sources et objets
-SRCS = $(wildcard $(SRC_DIR)/*.cpp) main.cpp
-OBJS = $(SRCS:.cpp=.o)
+# Fichiers sources communs (sans le main)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+
+# Nom des exécutables
 TARGET = app
+TEST_TARGET = test
 
 # Règle par défaut
 all: $(TARGET)
 
-# Lier l’exécutable
-$(TARGET): $(SRCS)
+# Compilation de l'app normale avec main.cpp
+$(TARGET): $(SRCS) main.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-# Nettoyer les fichiers objets et l’exécutable
-clean:
-	rm -f $(TARGET) $(OBJS)
+# Compilation des tests avec maintest.cpp
+test: $(SRCS) maintest.cpp
+	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $^
 
-# Juste l’exécutable
+# Nettoyer
+clean:
+	rm -f $(TARGET) $(TEST_TARGET)
+
+# Exécuter l'app
 run: $(TARGET)
 	./$(TARGET)
 
-.PHONY: all clean run
+# Exécuter les tests
+runtest: test
+	./$(TEST_TARGET)
+
+.PHONY: all clean run test runtest
