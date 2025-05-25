@@ -2,7 +2,7 @@
 #include <string>
 #include <ctime>
 #include <map>
-#include "include/Application.h"
+#include "Application.h"
 
 using namespace std;
 
@@ -12,7 +12,7 @@ int main()
   // test méthode moyenneQualiteAir de la classe application
   float lat;
   float longitude;
-  int perimetre;
+  float perimetre;
   time_t debut;
   time_t fin;
   map<string, float> qualiteAirParGaz;
