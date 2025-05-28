@@ -42,6 +42,9 @@ int main()
 
   // — Test 1 : cas nominal —
   {
+    std::cout << "----------------------------------------\n";
+    std::cout << "TESTS AVEC PEU DE CAPTEURS DANS LA BASE \n";
+    std::cout << "----------------------------------------\n";
     Application app;
     time_t now = time(nullptr);
 
@@ -147,6 +150,11 @@ int main()
     app.ajouterCapteur(E);
     runTest("Test 6 – Mesures identiques", app, A);
   }
+
+  // A PARTIR DU TEST 7 ON PREND EN COMPTE TOUS LES CAPTEURS DE LA BDD
+  std::cout << "----------------------------------------\n";
+  std::cout << "TESTS AVEC TOUS LES CAPTEURS DANS LA BASE \n";
+  std::cout << "----------------------------------------\n";
 
   return 0;
 }
