@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Application.h"
+#include "Parser.h"
 
 using namespace std;
 
@@ -42,7 +43,7 @@ void afficherMenuAdmin()
 void demanderMoyenneQualiteAir(Application app)
 {
     double latitude, longitude, rayon;
-    time_t dateDebut, dateFin;
+    string dateDebut, dateFin;
 
     cout << "Entrez la latitude : ";
     while (!(cin >> latitude) || latitude < -90.0 || latitude > 90.0)
@@ -65,21 +66,29 @@ void demanderMoyenneQualiteAir(Application app)
         cin.clear();
     }
 
-    cout << "Entrez la date de début (timestamp UNIX) : ";
-    while (!(cin >> dateDebut) || dateDebut < 0)
+    cout << "Entrez la date de début (YYYY-MM-DD HH:MM:SS) : ";
+    cin.ignore();
+    getline(cin, dateDebut);
+    time_t debut = Parser::parseDate(dateDebut);
+    while (debut <= 0)
     {
-        cout << "Date de début invalide. Entrez un timestamp UNIX positif : ";
-        cin.clear();
+        cout << "Date de début invalide. Entrez une date au format YYYY-MM-DD HH:MM:SS : ";
+        getline(cin, dateDebut);
+        debut = Parser::parseDate(dateDebut);
     }
 
-    cout << "Entrez la date de fin (timestamp UNIX) : ";
-    while (!(cin >> dateFin) || dateFin < dateDebut)
+    cout << "Entrez la date de fin (YYYY-MM-DD HH:MM:SS) : ";
+    getline(cin, dateFin);
+    time_t fin = Parser::parseDate(dateFin);
+    while (fin < debut)
     {
         cout << "Date de fin invalide. Elle doit être supérieure à la date de début : ";
-        cin.clear();
+        getline(cin, dateFin);
+        fin = Parser::parseDate(dateFin);
     }
+
     cout << "  Moyenne qualité air :" << "\n";
-    for (const auto &p : app.moyenneQualiteAir(latitude, longitude, dateDebut, dateFin, rayon))
+    for (const auto &p : app.moyenneQualiteAir(latitude, longitude, debut, fin, rayon))
     {
         cout << "    " << p.first << " : " << p.second << "\n";
     }
