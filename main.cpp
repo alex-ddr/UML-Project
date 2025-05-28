@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "Application.h"
 
 using namespace std;
 
@@ -8,9 +9,9 @@ using namespace std;
 void afficherMenuGouvernement()
 {
     cout << "\nRôle : GOUVERNEMENT" << endl;
-    cout << "1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
+    cout << "*1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
     cout << "2. Estimer la qualité de l’air à un point" << endl;
-    cout << "3. Classifier les capteurs similaires" << endl;
+    cout << "*3. Lister les capteurs similaires" << endl;
     cout << "4. Analyser un capteur privé" << endl;
     cout << "5. Mesurer le temps d’exécution d’un algorithme" << endl;
     cout << "6. Quitter" << endl;
@@ -19,9 +20,9 @@ void afficherMenuGouvernement()
 void afficherMenuUtilisateur()
 {
     cout << "\nRôle : UTILISATEUR" << endl;
-    cout << "1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
+    cout << "*1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
     cout << "2. Estimer la qualité de l’air" << endl;
-    cout << "3. Classifier les capteurs similaires" << endl;
+    cout << "*3. Lister les capteurs similaires" << endl;
     cout << "4. Consulter mes points" << endl;
     cout << "5. Quitter" << endl;
 }
@@ -29,16 +30,88 @@ void afficherMenuUtilisateur()
 void afficherMenuAdmin()
 {
     cout << "\nRôle : ADMIN" << endl;
-    cout << "1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
+    cout << "*1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
     cout << "2. Estimer la qualité de l’air" << endl;
-    cout << "3. Classifier les capteurs similaires" << endl;
+    cout << "*3. Lister les capteurs similaires" << endl;
     cout << "4. Analyser un capteur privé" << endl;
     cout << "5. Mesurer le temps d’exécution d’un algorithme" << endl;
     cout << "6. Faire une maintenance" << endl;
     cout << "7. Quitter" << endl;
 }
+
+void demanderMoyenneQualiteAir(Application app)
+{
+    double latitude, longitude, rayon;
+    time_t dateDebut, dateFin;
+
+    cout << "Entrez la latitude : ";
+    while (!(cin >> latitude) || latitude < -90.0 || latitude > 90.0)
+    {
+        cout << "Latitude invalide. Entrez une valeur entre -90 et 90 : ";
+        cin.clear();
+    }
+
+    cout << "Entrez la longitude : ";
+    while (!(cin >> longitude) || longitude < -180.0 || longitude > 180.0)
+    {
+        cout << "Longitude invalide. Entrez une valeur entre -180 et 180 : ";
+        cin.clear();
+    }
+
+    cout << "Entrez le rayon (en km) : ";
+    while (!(cin >> rayon) || rayon <= 0)
+    {
+        cout << "Rayon invalide. Entrez une valeur positive : ";
+        cin.clear();
+    }
+
+    cout << "Entrez la date de début (timestamp UNIX) : ";
+    while (!(cin >> dateDebut) || dateDebut < 0)
+    {
+        cout << "Date de début invalide. Entrez un timestamp UNIX positif : ";
+        cin.clear();
+    }
+
+    cout << "Entrez la date de fin (timestamp UNIX) : ";
+    while (!(cin >> dateFin) || dateFin < dateDebut)
+    {
+        cout << "Date de fin invalide. Elle doit être supérieure à la date de début : ";
+        cin.clear();
+    }
+    cout << "  Moyenne qualité air :" << "\n";
+    for (const auto &p : app.moyenneQualiteAir(latitude, longitude, dateDebut, dateFin, rayon))
+    {
+        cout << "    " << p.first << " : " << p.second << "\n";
+    }
+}
+
+void demanderListerCapteursSimilaires(Application app)
+{
+    int capteurId;
+    cout << "Entrez l'identifiant du capteur (0 à 99) : ";
+    while (!(cin >> capteurId) || capteurId < 0 || capteurId > 99)
+    {
+        cout << "Identifiant invalide. Entrez une valeur entre 0 et 99 : ";
+        cin.clear();
+    }
+
+    cout << "Capteurs similaires au capteur " << capteurId << " :" << endl;
+    Capteur capteur_choisi = app.trouverCapteurParId(capteurId);
+    for (const auto &cap_mesure : app.listerCapteursSimilaires(capteur_choisi))
+    {
+        Capteur c = cap_mesure.first;
+        float d = cap_mesure.second;
+
+        cout << c << endl
+             << "Distance : " << d << endl;
+    }
+}
+
 int main()
 {
+    Application app = Application();
+    if (!app.chargerDonnees("../data/sensors.csv", "../data/users.csv", "../data/attributes.csv", "../data/measurements.csv"))
+        cout << "Erreur au chargement des données." << endl;
     string role;
     cout << "Veuillez entrer votre rôle :" << endl;
     cout << "- GOUVERNEMENT (g/G)" << endl;
@@ -63,6 +136,7 @@ int main()
                 {
                 case '1':
                     cout << "-> Moyenne dans une zone (GOUVERNEMENT)" << endl;
+                    demanderMoyenneQualiteAir(app);
                     choix_valide = true;
                     break;
                 case '2':
@@ -70,7 +144,8 @@ int main()
                     choix_valide = true;
                     break;
                 case '3':
-                    cout << "-> Classification capteurs (GOUVERNEMENT)" << endl;
+                    cout << "-> Lister capteurs (GOUVERNEMENT)" << endl;
+                    demanderListerCapteursSimilaires(app);
                     choix_valide = true;
                     break;
                 case '4':
@@ -104,6 +179,7 @@ int main()
                 {
                 case '1':
                     cout << "-> Moyenne dans une zone (UTILISATEUR)" << endl;
+                    demanderMoyenneQualiteAir(app);
                     choix_valide = true;
                     break;
                 case '2':
@@ -111,7 +187,8 @@ int main()
                     choix_valide = true;
                     break;
                 case '3':
-                    cout << "-> Classification capteurs (UTILISATEUR)" << endl;
+                    cout << "-> Lister capteurs (UTILISATEUR)" << endl;
+                    demanderListerCapteursSimilaires(app);
                     choix_valide = true;
                     break;
                 case '4':
@@ -141,6 +218,7 @@ int main()
                 {
                 case '1':
                     cout << "-> Moyenne dans une zone (ADMIN)" << endl;
+                    demanderMoyenneQualiteAir(app);
                     choix_valide = true;
                     break;
                 case '2':
@@ -148,7 +226,8 @@ int main()
                     choix_valide = true;
                     break;
                 case '3':
-                    cout << "-> Classification capteurs (ADMIN)" << endl;
+                    cout << "-> Lister capteurs (ADMIN)" << endl;
+                    demanderListerCapteursSimilaires(app);
                     choix_valide = true;
                     break;
                 case '4':

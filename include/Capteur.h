@@ -29,7 +29,7 @@ public:
 
   // Méthodes
   bool estCapteurDeConfiance();
-  void ajouterMesure(const Mesure& mesure) {listeMesures.push_back(mesure);}
+  void ajouterMesure(const Mesure &mesure) { listeMesures.push_back(mesure); }
 
   // Getters
   const std::string &getCapteurId() const { return capteurId; }
@@ -54,6 +54,24 @@ public:
            confiance == other.confiance &&
            prive == other.prive &&
            listeMesures == other.listeMesures;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const Capteur &capteur)
+  {
+    os << "Capteur[ID: " << capteur.capteurId
+       << ", Latitude: " << capteur.latitude
+       << ", Longitude: " << capteur.longitude
+       << ", Confiance: " << (capteur.confiance ? "true" : "false")
+       << ", Prive: " << (capteur.prive ? "true" : "false")
+       << ", Mesures: [";
+    for (size_t i = 0; i < capteur.listeMesures.size(); ++i)
+    {
+      os << capteur.listeMesures[i];
+      if (i != capteur.listeMesures.size() - 1)
+        os << ", ";
+    }
+    os << "]]";
+    return os;
   }
 
   // Destructeur

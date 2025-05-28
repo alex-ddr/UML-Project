@@ -30,6 +30,7 @@ public:
     void faireMaintenance();
     void remplirCapteur();
     Personne authentifier(std::string identifiant, std::string mdp);
+    Capteur trouverCapteurParId(int id);
     bool chargerDonnees(const std::string &cheminFichierSensors, const std::string &cheminFichierUsers, const std::string &cheminFichierAttributs, const std::string &cheminFichierMesures);
 
     // Getters
