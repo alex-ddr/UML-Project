@@ -3,6 +3,7 @@
 #include <ctime>
 #include <map>
 #include "Application.h"
+#include "Capteur.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ double mesurerTempsExecution(Func func, Args &&...args)
 
 int main()
 {
-
-  return 0;
+  // Test listerCapteursSimilaires
+  Application app;
+  // Exemple de capteur
 }
