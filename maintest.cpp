@@ -42,6 +42,10 @@ int main()
     }
     cout << "----------------------------------------\n";
   };
+  // ---------------------------------------------------------------------------------------
+  cout << "Tests de listerCapteursSimilaires\n";
+  cout << "----------------------------------------\n";
+  cout << "Test sur peu capteurs\n";
 
   // TEST 1 – cas nominal
   {
@@ -140,6 +144,13 @@ int main()
     app.ajouterCapteur(E);
     runTest("Test 6 – Mesures identiques", app, A);
   }
+  cout << "----------------------------------------\n";
+  cout << "Test toute la bdd\n";
+  cout << "----------------------------------------\n";
+
+  cout << "----------------------------------------\n";
+  cout << "Tests de moyenneQualiteAir\n";
+  cout << "----------------------------------------\n";
 
   // ---------------------------------------------------------------------------------------
   //
@@ -152,7 +163,7 @@ int main()
     cout << "  Temps d'exécution : " << duree << " s\n";
 
     auto results = app.moyenneQualiteAir(lat, lon, debut, fin, rayon);
-    cout << "  Moyenne qualité air " << results.size() << "\n";
+    cout << "  Moyenne qualité air :" << "\n";
     for (const auto &p : results)
     {
       cout << "    " << p.first << " : " << p.second << "\n";
