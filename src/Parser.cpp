@@ -65,6 +65,8 @@ vector<Capteur> Parser::chargerCapteurs(const string &cheminFichierSensors, cons
             capteurs.push_back(capteur);
         }
     }
+    fichier.close();
+    return capteurs;
 }
 
 std::vector<Attribut> Parser::chargerAttributs(const std::string &cheminFichier)
@@ -98,37 +100,35 @@ std::vector<Attribut> Parser::chargerAttributs(const std::string &cheminFichier)
     fichier.close();
     return attributs;
 }
-/*
-std::vector<Personne> Parser::chargerPersonnes(const std::string& cheminFichier) ; {
-    vector<Attribut> attributs;
+
+std::vector<string> Parser::chargerCapteursPrive(const std::string& cheminFichier) {
+    vector<string> capteurs;
     ifstream fichier(cheminFichier);
     string ligne;
 
     if (!fichier.is_open()) {
         cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
-        return;
+        return capteurs;
     }
 
     while (getline(fichier, ligne)) {
         stringstream ss(ligne);
-        string id, unit, description;
+        string id, user;
 
+        getline(ss, user, ';');
         getline(ss, id, ';');
-        getline(ss, unit, ';');
-        getline(ss, description, ';');
 
-    if (!id.empty() && !unit.empty() && !description.empty()) {
-            Attribut attribut{id, unit, description};
-            attributs.push_back(attribut);
+    if (!id.empty() && !user.empty()) {
+            capteurs.push_back(id);
         }
     }
 
     fichier.close();
-    return attributs;
+    return capteurs;
 }
 
 
-*/
+
 
 void Parser::chargerMesures(const std::string &cheminFichierMesures, const std::string &cheminFichierAttributs, std::vector<Capteur> &capteurs)
 {
