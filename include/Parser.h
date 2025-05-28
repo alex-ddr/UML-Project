@@ -17,6 +17,7 @@ class Parser
         std::vector<Attribut> chargerAttributs(const std::string& cheminFichier) ;
         void chargerMesures(const std::string& cheminFichierMesures, const std::string& cheminFichierAttributs, std::vector<Capteur>& capteurs) ;
         std::vector<Personne> chargerPersonnes(const std::string& cheminFichier) ;
+
 };
 
 #endif
