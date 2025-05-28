@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 
-#include "Application.h"
-
 using namespace std;
 
 void afficherMenuGouvernement()
