@@ -1,19 +1,32 @@
 #ifndef UTILISATEUR_H
 #define UTILISATEUR_H
 
-#include "Personne.h"
 #include <string>
+#include <iostream>
+#include "Personne.h"
 
 class Utilisateur : public Personne
 {
-private:
-    long points;
+    private:
+        long points;
 
-public:
-    Utilisateur(std::string id, std::string nom, long points);
-    ~Utilisateur();
+    public:
+        // Constructeurs
+        Utilisateur(std::string identifiant, std::string mdp, long points, const std::vector<Capteur>& listeCapteursPersonne = {})
+        : Personne(identifiant, mdp, listeCapteursPersonne), points(points) {}
+        Utilisateur() {}
 
-    void consulterPoints() const;
+        // Destructeur
+        ~Utilisateur() {}
+
+        // Getters
+        long getPoints() const {return points;}
+
+        // Setters
+        void setPoints(const long& points) {this->points=points;}
+
+        // Methodes
+        void consulterPoints() const {std::cout << "L'utilisateur a " << points << " points." << std::endl;}
 };
 
 #endif

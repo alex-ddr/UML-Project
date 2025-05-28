@@ -42,9 +42,9 @@ int main()
 {
     string role;
     cout << "Veuillez entrer votre rôle :" << endl;
-    cout << "- GOUVERNEMENT" << endl;
-    cout << "- UTILISATEUR" << endl;
-    cout << "- ADMIN" << endl;
+    cout << "- GOUVERNEMENT (g/G)" << endl;
+    cout << "- UTILISATEUR (u/U)" << endl;
+    cout << "- ADMIN (a/A)" << endl;
     cout << "> ";
     cin >> role;
 
@@ -55,7 +55,7 @@ int main()
     int choix = 0;
     do
     {
-        if (role == "GOUVERNEMENT" || role == "g")
+        if (role == "GOUVERNEMENT" || role == "g" || role == "G")
         {
             afficherMenuGouvernement();
             cout << "> ";
@@ -87,7 +87,7 @@ int main()
                 break;
             }
         }
-        else if (role == "UTILISATEUR" || role == "u")
+        else if (role == "UTILISATEUR" || role == "u" || role == "U")
         {
             afficherMenuUtilisateur();
             cout << "> ";
@@ -114,7 +114,7 @@ int main()
                 break;
             }
         }
-        else if (role == "ADMIN" || role == "a")
+        else if (role == "ADMIN" || role == "a" || role == "A")
         {
             afficherMenuAdmin();
             cout << "> ";

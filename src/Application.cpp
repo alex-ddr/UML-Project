@@ -1,12 +1,37 @@
-#include "Application.h"
-#include "Mesures.h"
+#include <string>
+#include <vector>
+#include <utility>
 #include <cmath>
+#include <map>
 #include <algorithm>
-
+#include <cmath>
+#include "Application.h"
+#include "Mesure.h"
 using namespace std;
+
+
+// fonction pour calculer la distance euclidienne entre deux points
+float distance(float lat1, float lon1, float lat2, float lon2) {
+    return sqrt(pow(lat1 - lat2, 2) + pow(lon1 - lon2, 2));
+}
 
 map<string, float> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
+    /*
+    Calcule la moyenne de la qualité de l'air pour différents gaz sur une période donnée et dans une zone géographique.
+    
+    Arguments d'entrée :
+    - latitude : latitude du centre de la zone d'étude (float)
+    - longitude : longitude du centre de la zone d'étude (float)
+    - debut : timestamp de début de la période (time_t)
+    - fin : timestamp de fin de la période (time_t). Si nul (0), la période est d'une journée à partir de debut.
+    - perimetre : rayon de la zone d'étude autour des coordonnées, en unités compatibles (float)
+    
+    Retour :
+    - std::map<std::string, float> : moyennes des concentrations mesurées pour chaque gaz ("O3", "SO2", "NO2", "PM10")
+    */
+
+
     map<string, float> moyennesParGaz={
         {"O3", 0.0},
         {"SO2", 0.0},
@@ -19,54 +44,56 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
     float moyennesTotales[4] ={0};
 
 
-    if (!fin) {fin=debut+24*3600;} // si pas de fin définie, alors par défaut la fin est le jour de début + 1
+    if (!fin) {fin=debut+24*3600;} // si pas de fin définie, alors par défaut la fin est le jour de début + 1 (période d'un jour par défaut)
     
-    for (const Capteur& c: liste_capteurs)
+    for (const Capteur& c: listeTousLesCapteurs)
     {
         
+        // on ne prend que les capteurs dans la zone géographique circulaire donnée
+        if (distance(latitude, longitude, c.getLatitude(), c.getLongitude()) > perimetre)
+            continue;
+
         float moyennes[4] ={0};
         int nbMesures[4]={0};
         
-        for (const Mesures& m: c.getListeMesures()){
+        for (const Mesure& m: c.getListeMesures()){
             
+            // Pour chaque mesure du capteur, 
+            // qui est bien incluse dans l'intervalle de temps souhaité,
+            // on regarde à quel gaz elle conrrepond parmi O3, SO2, NO2 et PM10
+            // et pour ce gaz là, on incrémente le nombre de mesures 
+            // et on ajoute la mesure à sa moyenne 
 
             if(debut<m.getTimestamp() && m.getTimestamp() <fin)
             {
-                if ( m.getAttribut().attribut_id == "O3")
+
+                time_t t = m.getTimestamp();
+                if (t >= debut && t <= fin)
                 {
-                    moyennes[0] += m.getValeur();
-                    ++nbMesures[0];
-                    ++nbCapteurs[0];
-                }
-                else if ( m.getAttribut().attribut_id == "SO2")
-                {
-                    moyennes[1]+= m.getValeur();
-                    ++nbMesures[1];
-                    ++nbCapteurs[1];
-                }
-                else if ( m.getAttribut().attribut_id == "NO2")
-                {
-                    moyennes[2]+= m.getValeur();
-                    ++nbMesures[2];
-                    ++nbCapteurs[2];
-                }
-                else if ( m.getAttribut().attribut_id == "PM10")
-                {
-                    moyennes[3]+= m.getValeur();
-                    ++nbMesures[3];
-                    ++nbCapteurs[3];
+                    for (int i = 0; i < 4; ++i)
+                    {
+                        if (m.getAttribut().attributId == gaz[i])
+                        {
+                            moyennes[i] += m.getValeur();
+                            ++nbMesures[i];
+                        }
+                    }
                 }
             }
 
+
+            // on calcule les moyennes (pour chaque gaz) pour ce capteur 
             for (int i =0; i<4; ++i){
                 if (nbMesures[i] > 0) {
                 moyennes[i] /= nbMesures[i];
                 moyennesTotales[i] += moyennes[i];
+                ++nbCapteurs[i];
                 }
             }
         }
     }
 
+    // Enfin, la moyenne finale par gaz (moyenne des moyennes de tous les capteurs)
     for (int i =0; i<4; ++i){
         if (nbCapteurs[i]>0) moyennesTotales[i]/=nbCapteurs[i];
         moyennesParGaz[gaz[i]] = moyennesTotales[i];
@@ -76,75 +103,92 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
 {
+    /*
+    Retourne une liste des capteurs similaires à un capteur donné, avec une mesure de la distance d'erreur moyenne.
+     
+    Arguments d'entrée :
+    - capteur : référence au capteur de référence pour la comparaison
+      
+    Fonctionnement :
+    - Calcule la date la plus récente parmi les mesures du capteur donné.
+    - Définit une période d'une semaine avant cette date.
+    - Pour chaque capteur dans la liste globale, calcule la distance moyenne quadratique
+       des valeurs mesurées communes dans cette période.
+    - Trie les capteurs par similarité croissante (distance moyenne la plus faible en premier).
+    
+    Retour :
+    - std::vector<std::pair<Capteur, float>> : vecteur de paires (capteur, distance moyenne d'erreur)
+    */
+
     // 1. Date la plus récente dans toutes les mesures
-    vector<Mesures> liste_mesures_capteur = capteur.getListeMesures();
-    time_t date_max = 0;
-    for (const Mesures &mesure : liste_mesures_capteur)
-        if (!date_max || date_max < mesure.getTimestamp())
-            date_max = mesure.getTimestamp();
+    vector<Mesure> listeMesuresCapteur = capteur.getListeMesures();
+    time_t dateMax = 0;
+    for (const Mesure &mesure : listeMesuresCapteur)
+        if (!dateMax || dateMax < mesure.getTimestamp())
+            dateMax = mesure.getTimestamp();
 
     // 2. Date de début
-    time_t date_debut = date_max - 7 * 24 * 60 * 60;
+    time_t dateDebut = dateMax - 7 * 24 * 60 * 60;
 
     // 3. Toutes les mesures de capteur entre date_debut et date_max
-    vector<Mesures> liste_mesures;
-    for (const auto &mesure : liste_mesures)
-        if (mesure.getTimestamp() > date_debut)
-            liste_mesures.push_back(mesure);
+    vector<Mesure> listeMesures;
+    for (const auto &mesure : listeMesures)
+        if (mesure.getTimestamp() > dateDebut)
+            listeMesures.push_back(mesure);
 
     // 4. Liste vide
-    vector<pair<Capteur, float>> capteurs_similaires;
+    vector<pair<Capteur, float>> capteursSimilaires;
 
     // 5. Itération sur tous les capteurs
-    for (const Capteur &capteur_autre : liste_capteurs)
+    for (const Capteur &capteurAutre : listeTousLesCapteurs)
     {
         // a)
-        if (capteur_autre == capteur)
+        if (capteurAutre == capteur)
             continue;
 
         // b)
-        vector<Mesures> liste_mesures_autres;
-        for (const auto &mesure_autre : capteur_autre.getListeMesures())
-            if (mesure_autre.getTimestamp() > date_debut)
-                liste_mesures.push_back(mesure_autre);
+        vector<Mesure> listeMesuresAutres;
+        for (const auto &mesureAutre : capteurAutre.getListeMesures())
+            if (mesureAutre.getTimestamp() > dateDebut)
+                listeMesures.push_back(mesureAutre);
 
         // c)
-        float distance_totale = 0;
+        float distanceTotale = 0;
         // d)
-        int nombre_commun = 0;
+        int nombreCommun = 0;
 
         // e)
-        for (const auto &mesure : liste_mesures)
+        for (const auto &mesure : listeMesures)
         {
-            for (const auto &mesure_autre : liste_mesures_autres)
+            for (const auto &mesureAutre : listeMesuresAutres)
             {
-                if (mesure.getAttribut().attribut_id == mesure_autre.getAttribut().attribut_id)
+                if (mesure.getAttribut().attributId == mesureAutre.getAttribut().attributId)
                 {
-                    float erreur = mesure.getValeur() - mesure_autre.getValeur();
-                    distance_totale = distance_totale + erreur * erreur;
-                    nombre_commun++;
+                    float erreur = mesure.getValeur() - mesureAutre.getValeur();
+                    distanceTotale = distanceTotale + erreur * erreur;
+                    nombreCommun++;
                     break; // à vérifier
                 }
             }
         }
 
         // f)
-        float distance_moyenne = 0;
-        if (nombre_commun > 0)
+        float distanceMoyenne = 0;
+        if (nombreCommun > 0)
         {
-            distance_moyenne = sqrt(distance_totale / nombre_commun);
-            capteurs_similaires.push_back(make_pair(capteur_autre, distance_moyenne));
+            distanceMoyenne = sqrt(distanceTotale / nombreCommun);
+            capteursSimilaires.push_back(make_pair(capteurAutre, distanceMoyenne));
         }
     }
 
     // 6.
-    sort(capteurs_similaires.begin(), capteurs_similaires.end(),
+    sort(capteursSimilaires.begin(), capteursSimilaires.end(),
          [](const pair<Capteur, float> &a, const pair<Capteur, float> &b)
          {
              return a.second < b.second;
          });
 
-    return capteurs_similaires;
+    return capteursSimilaires;
 }
 
 void Application::ajouterCapteur()
@@ -155,3 +199,13 @@ void Application::ajouterCapteur()
 
     return;
 }
+
+// On met ici les méthodes déclarées dans le .h 
+/* 
+float Application::estimerQualiteAir(float latitude, float longitude) const {}
+void Application::ajouterPointUtilisateur(Utilisateur &user) const {}
+void Application::analyserCapteurPrive() const {}
+void Application::mesurerAlgorithme() const {}
+void Application::faireMaintenance() {}
+void Application::remplirCapteur() {}
+Personne Application::authentifier(string identifiant, string mdp) {}*/

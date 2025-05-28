@@ -6,22 +6,36 @@
 
 class Cleaner
 {
-private:
-    std::string cleaner_id;
-    float latitude;
-    float longitude;
-    time_t timestamp_start;
-    time_t timestamp_stop;
+    private:
+        std::string cleanerId;
+        float latitude;
+        float longitude;
+        time_t timestampStart;
+        time_t timestampStop;
 
-public:
-    Cleaner(const std::string &id, float lat, float lon, const time_t &start, const time_t &stop);
-    ~Cleaner();
+    public:
+        // Constructeurs
+        Cleaner(const std::string &id, float lat, float lon, const time_t &start, const time_t &stop)
+            : cleanerId(id), latitude(lat), longitude(lon), timestampStart(start), timestampStop(stop) {}
+        Cleaner() {}
 
-    std::string getCleanerId() const;
-    float getLatitude() const;
-    float getLongitude() const;
-    time_t getTimestampStart() const;
-    time_t getTimestampStop() const;
+        // Destructeur
+        ~Cleaner() {}
+
+        // Getters
+        std::string getCleanerId() const {return cleanerId;}
+        float getLatitude() const {return latitude;}
+        float getLongitude() const {return longitude;}
+        time_t getTimestampStart() const {return timestampStart;}
+        time_t getTimestampStop() const {return timestampStop;}
+
+        // Setters
+        void setCleanerId(const std::string& cleanerId)  { this->cleanerId = cleanerId; } 
+        void setLatitude(const float latitude)  { this->latitude = latitude; }
+        void setLongitude(const float longitude) { this->longitude = longitude; } 
+        void setTimestampStart(const time_t& timestampStart) { this->timestampStart = timestampStart; } 
+        void setTimestampStop(const time_t& timestampStop)  { this->timestampStop = timestampStop; }
+
 };
 
 #endif

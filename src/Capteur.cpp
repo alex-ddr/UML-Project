@@ -1,6 +1,7 @@
 #include "Capteur.h"
 
-bool estCapteurDeConfiance()
+
+bool Capteur::estCapteurDeConfiance()
 {
   return true;
 }

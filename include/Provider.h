@@ -3,14 +3,22 @@
 
 class Provider
 {
-private:
-    long provider_id;
+    private:
+        long providerId;
 
-public:
-    Provider(long id);
-    ~Provider();
+    public:
+        // Constructeurs
+        Provider() {}
+        Provider(long id) : providerId(id) {}
 
-    long getProviderId() const;
+        // Destructeur
+        ~Provider() {}
+
+        // Getters
+        long getProviderId() const {return providerId;}
+
+        // Setters
+        void setProviderId(const long& providerId) {this->providerId=providerId;}
 };
 
 #endif

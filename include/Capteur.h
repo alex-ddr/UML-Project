@@ -1,56 +1,55 @@
 #ifndef CAPTEUR_H
 #define CAPTEUR_H
-using namespace std;
 
 #include <string>
-#include "Mesures.h"
 #include <vector>
+#include "Mesure.h"
+
 class Capteur
 {
-private:
-  long capteur_id;
-  float latitude;
-  float longitude;
-  bool confiance;
-  bool prive;
-  vector<Mesures> liste_mesures;
+  private:
+    long capteurId;
+    float latitude;
+    float longitude;
+    bool confiance;
+    bool prive;
+    std::vector<Mesure> listeMesures;
 
-public:
-  // Constructor
-  Capteur(long id, float lat, float lon, bool conf, bool priv)
-      : capteur_id(id), latitude(lat), longitude(lon), confiance(conf), prive(priv)
-  {
-  }
+  public:
+    // Constructeur
+    Capteur(long id, float lat, float lon, bool conf, bool priv, std::vector<Mesure> listeMesures)
+        : capteurId(id), latitude(lat), longitude(lon), confiance(conf), prive(priv), listeMesures(listeMesures)
+    {}
 
-  // Méthodes
-  bool estCapteurDeConfiance();
+    // Méthodes
+    bool estCapteurDeConfiance();
 
-  // Getters
-  long getCapteurId() const { return capteur_id; }
-  float getLatitude() const { return latitude; }
-  float getLongitude() const { return longitude; }
-  bool isConfiance() const { return confiance; }
-  bool isPrive() const { return prive; }
-  vector<Mesures> getListeMesures() const { return liste_mesures; }
+    // Getters
+    long getCapteurId() const { return capteurId; }
+    float getLatitude() const { return latitude; }
+    float getLongitude() const { return longitude; }
+    bool isConfiance() const { return confiance; }
+    bool isPrive() const { return prive; }
+    std::vector<Mesure> getListeMesures() const { return listeMesures; }
 
-  // Setters
-  void setCapteurId(long id) { capteur_id = id; }
-  void setLatitude(float lat) { latitude = lat; }
-  void setLongitude(float lon) { longitude = lon; }
-  void setConfiance(bool conf) { confiance = conf; }
-  void setPrive(bool priv) { prive = priv; }
+    // Setters
+    void setCapteurId(long id) { capteurId = id; }
+    void setLatitude(float lat) { latitude = lat; }
+    void setLongitude(float lon) { longitude = lon; }
+    void setConfiance(bool conf) { confiance = conf; }
+    void setPrive(bool priv) { prive = priv; }
 
-  bool operator==(const Capteur &other) const
-  {
-    return capteur_id == other.capteur_id &&
-           latitude == other.latitude &&
-           longitude == other.longitude &&
-           confiance == other.confiance &&
-           prive == other.prive &&
-           liste_mesures == other.liste_mesures;
-  }
+    bool operator==(const Capteur &other) const
+    {
+      return capteurId == other.capteurId &&
+            latitude == other.latitude &&
+            longitude == other.longitude &&
+            confiance == other.confiance &&
+            prive == other.prive &&
+            listeMesures == other.listeMesures;
+    }
 
-  // Destructor
-  ~Capteur() {}
+    // Destructeur
+    ~Capteur() {}
 };
 #endif

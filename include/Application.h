@@ -1,5 +1,4 @@
-#include <iostream>
-#include <cstring>
+#include <string>
 #include <ctime>
 #include <vector>
 #include <utility>
@@ -7,37 +6,34 @@
 #include "Capteur.h"
 #include "Utilisateur.h"
 
-using namespace std;
-
 class Application
 {
-private:
-    vector<Capteur> liste_capteurs;
+    private:
+        std::vector<Capteur> listeTousLesCapteurs;
 
-public:
-    // Constructeur
-    Application() {}
-    Application(const vector<Capteur> &liste_capteurs)
-        : liste_capteurs(liste_capteurs) {}
+    public:
+        // Constructeur
+        Application() {}
+        Application(const std::vector<Capteur> &listeTousLesCapteurs) : listeTousLesCapteurs(listeTousLesCapteurs) {}
 
-    // Déstructeur
-    ~Application() {}
+        // Destructeur
+        ~Application() {}
 
-    // Méthodes
-    map<string, float>  moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const;
-    float estimerQualiteAir(float latitude, float longitude) const;
-    vector<pair<Capteur, float>> listerCapteursSimilaires(Capteur &capteur) const;
-    void ajouterPointUtilisateur(Utilisateur &user) const;
-    void analyserCapteurPrive() const;
-    void mesurerAlgorithme() const;
-    void ajouterCapteur();
-    void faireMaintenance();
-    void remplirCapteur();
-    Personne authentifier(string identifiant, string mdp);
+        // Méthodes
+        std::map<std::string, float>  moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const;
+        float estimerQualiteAir(float latitude, float longitude) const;
+        std::vector<std::pair<Capteur, float>> listerCapteursSimilaires(Capteur &capteur) const;
+        void ajouterPointUtilisateur(Utilisateur &user) const;
+        void analyserCapteurPrive() const;
+        void mesurerAlgorithme() const;
+        void ajouterCapteur();
+        void faireMaintenance();
+        void remplirCapteur();
+        Personne authentifier(std::string identifiant, std::string mdp);
 
-    // Getters
-    vector<Capteur> getListeCapteurs() const { return liste_capteurs; }
+        // Getters
+        std::vector<Capteur> getListeTousLesCapteurs() const { return listeTousLesCapteurs; }
 
-    // Setters
-    void setListeCapteurs(const vector<Capteur> &liste_capteurs) { this->liste_capteurs = liste_capteurs; }
+        // Setters
+        void setListeTousLesCapteurs(const std::vector<Capteur> &listeTousLesCapteurs) { this->listeTousLesCapteurs = listeTousLesCapteurs; }
 };

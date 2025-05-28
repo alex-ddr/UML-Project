@@ -2,20 +2,25 @@
 #define ATTRIBUT_H
 
 #include <string>
-using namespace std;
+
+// Attribut n'est pas une Classe mais un Struct. 
+// La seule chose qui change, c'est que les membres sont publics par défaut
+// Sinon même fonctionnement que pour une Classe. 
 
 struct Attribut
 {
-  string attribut_id;
-  string unit;
-  string description;
+  std::string attributId;
+  std::string unit;
+  std::string description;
 
   bool operator==(const Attribut &other) const
   {
-    return attribut_id == other.attribut_id &&
-           unit == other.unit &&
-           description == other.description;
+    return attributId == other.attributId &&
+            unit == other.unit &&
+            description == other.description;
   }
+
+
 };
 
-#endif // ATTRIBUT_H
+#endif 

@@ -6,9 +6,20 @@
 
 class Gouvernement : public Responsable
 {
-public:
-    Gouvernement(std::string id, std::string nom);
-    ~Gouvernement();
+
+    private:
+        // Gouvernement est une classe héritière de Responsable 
+        // Elle n'a pas d'attribut propre
+
+        
+    public:
+        // Constructeurs
+        Gouvernement(std::string identifiant, std::string mdp, const std::vector<Capteur>& listeCapteursPersonne = {}) 
+            : Responsable(identifiant, mdp, listeCapteursPersonne) {}
+        Gouvernement() : Responsable() {}
+
+        // Destructeur
+        ~Gouvernement() {}
 };
 
 #endif
