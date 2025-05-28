@@ -72,7 +72,7 @@ std::vector<Attribut> Parser::chargerAttributs(const std::string &cheminFichier)
     if (!fichier.is_open())
     {
         cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
-        return;
+        return attributs;
     }
 
     while (getline(fichier, ligne))
