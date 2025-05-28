@@ -29,6 +29,7 @@ public:
 
   // Méthodes
   bool estCapteurDeConfiance();
+  void ajouterMesure(const Mesure& mesure) {listeMesures.push_back(mesure);}
 
   // Getters
   const std::string &getCapteurId() const { return capteurId; }
