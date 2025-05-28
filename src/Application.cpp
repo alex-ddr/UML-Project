@@ -107,92 +107,69 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
 {
-    /*
-    Retourne une liste des capteurs similaires à un capteur donné, avec une mesure de la distance d'erreur moyenne.
-
-    Arguments d'entrée :
-    - capteur : référence au capteur de référence pour la comparaison
-
-    Fonctionnement :
-    - Calcule la date la plus récente parmi les mesures du capteur donné.
-    - Définit une période d'une semaine avant cette date.
-    - Pour chaque capteur dans la liste globale, calcule la distance moyenne quadratique
-       des valeurs mesurées communes dans cette période.
-    - Trie les capteurs par similarité croissante (distance moyenne la plus faible en premier).
-
-    Retour :
-    - std::vector<std::pair<Capteur, float>> : vecteur de paires (capteur, distance moyenne d'erreur)
-    */
-
-    // 1. Date la plus récente dans toutes les mesures
-    vector<Mesure> listeMesuresCapteur = capteur.getListeMesures();
+    // 1) Date max
+    auto mesuresRefFull = capteur.getListeMesures();
     time_t dateMax = 0;
-    for (const Mesure &mesure : listeMesuresCapteur)
-        if (!dateMax || dateMax < mesure.getTimestamp())
-            dateMax = mesure.getTimestamp();
+    for (auto &m : mesuresRefFull)
+        if (m.getTimestamp() > dateMax)
+            dateMax = m.getTimestamp();
 
-    // 2. Date de début
-    time_t dateDebut = dateMax - 7 * 24 * 60 * 60;
+    // 2) Date début
+    time_t dateDebut = dateMax - 7 * 24 * 3600;
 
-    // 3. Toutes les mesures de capteur entre date_debut et date_max
-    vector<Mesure> listeMesures;
-    for (const auto &mesure : listeMesures)
-        if (mesure.getTimestamp() > dateDebut)
-            listeMesures.push_back(mesure);
+    // 3) Filtrer les mesures de référence
+    vector<Mesure> mesuresRef;
+    for (auto &m : mesuresRefFull)
+        if (m.getTimestamp() >= dateDebut && m.getTimestamp() <= dateMax)
+            mesuresRef.push_back(m);
 
-    // 4. Liste vide
-    vector<pair<Capteur, float>> capteursSimilaires;
+    // 4) Prépare le résultat
+    vector<pair<Capteur, float>> capteursSim;
 
-    // 5. Itération sur tous les capteurs
-    for (const Capteur &capteurAutre : listeTousLesCapteurs)
+    // 5) Parcours tous les capteurs
+    for (auto &autre : listeTousLesCapteurs)
     {
-        // a)
-        if (capteurAutre == capteur)
+        if (autre == capteur)
             continue;
+        // si on gère la fiabilité RAJOUTER UN TRUC
+        if (!autre.isConfiance())
+            continue; // on ne prend pas les capteurs non fiables
+        // 5b) filtre ses mesures
+        vector<Mesure> mesuresAutre;
+        for (auto &m : autre.getListeMesures())
+            if (m.getTimestamp() >= dateDebut && m.getTimestamp() <= dateMax)
+                mesuresAutre.push_back(m);
 
-        // b)
-        vector<Mesure> listeMesuresAutres;
-        for (const auto &mesureAutre : capteurAutre.getListeMesures())
-            if (mesureAutre.getTimestamp() > dateDebut)
-                listeMesures.push_back(mesureAutre);
-
-        // c)
-        float distanceTotale = 0;
-        // d)
-        int nombreCommun = 0;
-
-        // e)
-        for (const auto &mesure : listeMesures)
+        // 5c) calcul de la distance
+        float somme2 = 0;
+        int nbComm = 0;
+        for (auto &mRef : mesuresRef)
         {
-            for (const auto &mesureAutre : listeMesuresAutres)
+            for (auto &mAut : mesuresAutre)
             {
-                if (mesure.getAttribut().attributId == mesureAutre.getAttribut().attributId)
+                if (mRef.getAttribut().attributId == mAut.getAttribut().attributId && mRef.getTimestamp() == mAut.getTimestamp())
                 {
-                    float erreur = mesure.getValeur() - mesureAutre.getValeur();
-                    distanceTotale = distanceTotale + erreur * erreur;
-                    nombreCommun++;
-                    break; // à vérifier
+                    float err = mRef.getValeur() - mAut.getValeur();
+                    somme2 += err * err;
+                    ++nbComm;
+                    break;
                 }
             }
         }
 
-        // f)
-        float distanceMoyenne = 0;
-        if (nombreCommun > 0)
+        if (nbComm > 0)
         {
-            distanceMoyenne = sqrt(distanceTotale / nombreCommun);
-            capteursSimilaires.push_back(make_pair(capteurAutre, distanceMoyenne));
+            float dist = std::sqrt(somme2 / nbComm);
+            capteursSim.emplace_back(autre, dist);
         }
     }
 
-    // 6.
-    sort(capteursSimilaires.begin(), capteursSimilaires.end(),
-         [](const pair<Capteur, float> &a, const pair<Capteur, float> &b)
-         {
-             return a.second < b.second;
-         });
+    // 6) tri par distance croissante
+    std::sort(capteursSim.begin(), capteursSim.end(),
+              [](auto &a, auto &b)
+              { return a.second < b.second; });
 
-    return capteursSimilaires;
+    return capteursSim;
 }
 
 void Application::ajouterCapteur(Capteur &capteur)
