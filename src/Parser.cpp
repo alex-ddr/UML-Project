@@ -9,11 +9,12 @@
 #include "Mesure.h"
 #include "Capteur.h"
 #include "Attribut.h"
+#include "Personne.h"
 using namespace std;
 
 
 
-time_t parseDate(string datetime_str)
+time_t Parser::parseDate(string datetime_str)
 {
   tm tm = {};
   istringstream ss(datetime_str);
@@ -90,7 +91,37 @@ std::vector<Attribut> Parser::chargerAttributs(const std::string& cheminFichier)
     fichier.close();
     return attributs;
 }
+/*
+std::vector<Personne> Parser::chargerPersonnes(const std::string& cheminFichier) ; {
+    vector<Attribut> attributs;
+    ifstream fichier(cheminFichier);
+    string ligne;
 
+    if (!fichier.is_open()) {
+        cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
+        return;
+    }
+    
+    while (getline(fichier, ligne)) {
+        stringstream ss(ligne);
+        string id, unit, description;
+
+        getline(ss, id, ';');
+        getline(ss, unit, ';');
+        getline(ss, description, ';');
+
+    if (!id.empty() && !unit.empty() && !description.empty()) {
+            Attribut attribut{id, unit, description};
+            attributs.push_back(attribut);
+        }
+    }
+
+    fichier.close();
+    return attributs;
+}
+
+
+*/
 
 
 void Parser::chargerMesures(const std::string& cheminFichierMesures,const std::string& cheminFichierAttributs, std::vector<Capteur>& capteurs) {
