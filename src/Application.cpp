@@ -52,6 +52,14 @@ map<string, int> calculerIndicesATMO(const map<string, float> &moyennesParGaz)
     return indices;
 }
 
+Capteur Application::trouverCapteurParId(int id)
+{
+    for (const auto &cap : listeTousLesCapteurs)
+        if (cap.getCapteurId() == ("Sensor" + to_string(id)))
+            return cap;
+    Capteur return_cap = Capteur("Sensor1000", 0.0f, 0.0f, true, false, {});
+    return return_cap;
+}
 map<string, int> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
     /*

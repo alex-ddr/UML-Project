@@ -30,6 +30,7 @@ public:
     void faireMaintenance();
     void remplirCapteur();
     Personne authentifier(std::string identifiant, std::string mdp);
+    Capteur trouverCapteurParId(int id);
 
     // Getters
     std::vector<Capteur> getListeTousLesCapteurs() const { return listeTousLesCapteurs; }
