@@ -15,7 +15,44 @@ float distance(float lat1, float lon1, float lat2, float lon2)
     return sqrt(pow(lat1 - lat2, 2) + pow(lon1 - lon2, 2));
 }
 
-map<string, float> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
+int getIndiceFromValue(float value, const vector<pair<float, float>> &ranges)
+{
+    for (size_t i = 0; i < ranges.size(); ++i)
+    {
+        if (value >= ranges[i].first && value <= ranges[i].second)
+            return static_cast<int>(i) + 1;
+    }
+    // Valeurs hors norme : retourne 10 (Très mauvais)
+    return 10;
+}
+
+map<string, int> calculerIndicesATMO(const map<string, float> &moyennesParGaz)
+{
+    // Ranges ATMO pour chaque polluant, indexés de 1 à 10
+    map<string, vector<pair<float, float>>> seuils = {
+        {"O3", {{0, 29}, {30, 54}, {55, 79}, {80, 104}, {105, 129}, {130, 149}, {150, 179}, {180, 209}, {210, 239}, {240, 1e9}}},
+        {"SO2", {{0, 39}, {40, 79}, {80, 119}, {120, 159}, {160, 199}, {200, 249}, {250, 299}, {300, 399}, {400, 499}, {500, 1e9}}},
+        {"NO2", {{0, 29}, {30, 54}, {55, 84}, {85, 109}, {110, 134}, {135, 164}, {165, 199}, {200, 274}, {275, 399}, {400, 1e9}}},
+        {"PM10", {{0, 6}, {7, 13}, {14, 20}, {21, 27}, {28, 34}, {35, 41}, {42, 49}, {50, 64}, {65, 79}, {80, 1e9}}}};
+
+    map<string, int> indices;
+    for (auto it = moyennesParGaz.begin(); it != moyennesParGaz.end(); ++it)
+    {
+        const string &gaz = it->first;
+        float valeur = it->second;
+        if (seuils.count(gaz))
+        {
+            indices[gaz] = getIndiceFromValue(valeur, seuils[gaz]);
+        }
+        else
+        {
+            indices[gaz] = -1; // gaz inconnu
+        }
+    }
+    return indices;
+}
+
+map<string, int> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
     /*
     Calcule la moyenne de la qualité de l'air pour différents gaz sur une période donnée et dans une zone géographique.
@@ -28,7 +65,7 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
     - perimetre : rayon de la zone d'étude autour des coordonnées, en unités compatibles (float)
 
     Retour :
-    - std::map<std::string, float> : moyennes des concentrations mesurées pour chaque gaz ("O3", "SO2", "NO2", "PM10")
+    - map<string, float> : indice ATMO des concentrations mesurées pour chaque gaz ("O3", "SO2", "NO2", "PM10")
     */
 
     map<string, float> moyennesParGaz = {
@@ -102,7 +139,8 @@ map<string, float> Application::moyenneQualiteAir(float latitude, float longitud
             moyennesTotales[i] /= nbCapteurs[i];
         moyennesParGaz[gaz[i]] = moyennesTotales[i];
     }
-    return moyennesParGaz;
+
+    return calculerIndicesATMO(moyennesParGaz);
 }
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
@@ -159,15 +197,15 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
 
         if (nbComm > 0)
         {
-            float dist = std::sqrt(somme2 / nbComm);
+            float dist = sqrt(somme2 / nbComm);
             capteursSim.emplace_back(autre, dist);
         }
     }
 
     // 6) tri par distance croissante
-    std::sort(capteursSim.begin(), capteursSim.end(),
-              [](auto &a, auto &b)
-              { return a.second < b.second; });
+    sort(capteursSim.begin(), capteursSim.end(),
+         [](auto &a, auto &b)
+         { return a.second < b.second; });
 
     return capteursSim;
 }

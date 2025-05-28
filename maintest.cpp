@@ -3,6 +3,7 @@
 #include <ctime>
 #include <map>
 #include "Application.h"
+#include "Parser.h"
 
 using namespace std;
 
@@ -10,7 +11,7 @@ template <typename Func, typename... Args>
 double mesurerTempsExecution(Func func, Args &&...args)
 {
   clock_t start = clock();
-  func(std::forward<Args>(args)...);
+  func(forward<Args>(args)...);
   clock_t end = clock();
   return static_cast<double>(end - start) / CLOCKS_PER_SEC;
 }
@@ -22,21 +23,21 @@ int main()
   Attribut attNO2{"NO2", "µg/m³", "Dioxyde d'azote"};
 
   // Lambda pour exécuter et afficher un test de listerCapteursSimilaires
-  auto runTest = [&](const std::string &titre, Application &app, Capteur &ref)
+  auto runTest = [&](const string &titre, Application &app, Capteur &ref)
   {
-    std::cout << titre << "\n";
+    cout << titre << "\n";
     double duree = mesurerTempsExecution(
         &Application::listerCapteursSimilaires, &app, ref);
-    std::cout << "  Temps d'exécution : " << duree << " s\n";
+    cout << "  Temps d'exécution : " << duree << " s\n";
 
     auto results = app.listerCapteursSimilaires(ref);
-    std::cout << "  Nombre de capteurs similaires : " << results.size() << "\n";
+    cout << "  Nombre de capteurs similaires : " << results.size() << "\n";
     for (auto &p : results)
     {
-      std::cout << "    ID=" << p.first.getCapteurId()
-                << "  distance=" << p.second << "\n";
+      cout << "    ID=" << p.first.getCapteurId()
+           << "  distance=" << p.second << "\n";
     }
-    std::cout << "----------------------------------------\n";
+    cout << "----------------------------------------\n";
   };
 
   // — Test 1 : cas nominal —
@@ -91,19 +92,19 @@ int main()
     Application app;
     time_t now = time(nullptr);
     // A a 10 mesures O3
-    std::vector<Mesure> listA;
+    vector<Mesure> listA;
     for (int i = 0; i < 10; ++i)
       listA.push_back(Mesure{now + i, float(i), attO3});
     Capteur A{1, 0.0, 0.0, true, false, listA};
 
     // B partage 5 premières
-    std::vector<Mesure> listB;
+    vector<Mesure> listB;
     for (int i = 0; i < 5; ++i)
       listB.push_back(Mesure{now + i, float(i) + 0.1f, attO3});
     Capteur B{2, 0.0, 0.0, true, false, listB};
 
     // C partage 2 premières
-    std::vector<Mesure> listC;
+    vector<Mesure> listC;
     for (int i = 0; i < 2; ++i)
       listC.push_back(Mesure{now + i, float(i) + 0.2f, attO3});
     Capteur C{3, 0.0, 0.0, true, false, listC};
@@ -147,5 +148,36 @@ int main()
     runTest("Test 6 – Mesures identiques", app, A);
   }
 
+  // ---------------------------------------------------------------------------------------
+  //
+  // Lambda pour exécuter et afficher un test de MoyenneQualiteAir
+  auto runTest2 = [&](const string &titre, Application &app, float lat, float lon, time_t debut, time_t fin, float rayon)
+  {
+    cout << titre << "\n";
+    double duree = mesurerTempsExecution(
+        &Application::moyenneQualiteAir, &app, lat, lon, debut, fin, rayon);
+    cout << "  Temps d'exécution : " << duree << " s\n";
+
+    auto results = app.moyenneQualiteAir(lat, lon, debut, fin, rayon);
+    cout << "  Moyenne qualité air " << results.size() << "\n";
+    for (const auto &p : results)
+    {
+      cout << "    " << p.first << " : " << p.second << "\n";
+    }
+    cout << "----------------------------------------\n";
+  };
+  Application app;
+
+  // — Test 1 :  Aucun capteur dans le rayon peu import le timestap
+  float lat = 41.4, lon = -90.6, perimeter = 5.0;
+  time_t debut = Parser::parseDate("2019-02-14 12:00:00");
+  time_t fin = 0;
+  runTest2("Test 1 – Aucun capteur dans le rayon peu import le timestap", app, lat, lon, debut, fin, perimeter);
+
+  // — Test 2 : Un ou plusieurs capteurs dans le rayon pour un timestamp valide
+  lat = 44.8, lon = 4.6, perimeter = 10.0;
+  debut = Parser::parseDate("2019-02-04 12:00:00");
+  fin = debut + 24 * 3600 * 7;
+  runTest2("Test 2 – Un ou plusieurs capteurs dans le rayon pour un timestamp valide", app, lat, lon, debut, fin, perimeter);
   return 0;
 }
