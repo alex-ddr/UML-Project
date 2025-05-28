@@ -1,6 +1,7 @@
 # Répertoires
 INCLUDES = -Iinclude
 SRC_DIR = src
+BUILD_DIR = Build
 
 # Compilateur
 CXX = g++
@@ -9,31 +10,38 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -O2 $(INCLUDES)
 # Fichiers sources communs (sans le main)
 SRCS = $(wildcard $(SRC_DIR)/*.cpp)
 
-# Nom des exécutables
-TARGET = app
-TEST_TARGET = test
+# Noms des exécutables
+TARGET = $(BUILD_DIR)/app
+TEST_TARGET = $(BUILD_DIR)/test
 
 # Règle par défaut
 all: $(TARGET)
 
-# Compilation de l'app normale avec main.cpp
-$(TARGET): $(SRCS) main.cpp
-	$(CXX) $(CXXFLAGS) -o $@ $^
+# Création du répertoire Build si besoin
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+# Compilation de l'app principale avec main.cpp
+$(TARGET): $(BUILD_DIR) $(SRCS) main.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $(SRCS) main.cpp
 
 # Compilation des tests avec maintest.cpp
-test: $(SRCS) maintest.cpp
-	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $^
+$(TEST_TARGET): $(BUILD_DIR) $(SRCS) maintest.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $(SRCS) maintest.cpp
+
+# Règle explicite pour build de test
+test: $(TEST_TARGET)
 
 # Nettoyer
 clean:
-	rm -f $(TARGET) $(TEST_TARGET)
+	rm -f $(BUILD_DIR)/app $(BUILD_DIR)/test
 
 # Exécuter l'app
 run: $(TARGET)
 	./$(TARGET)
 
 # Exécuter les tests
-runtest: test
+runtest: $(TEST_TARGET)
 	./$(TEST_TARGET)
 
 .PHONY: all clean run test runtest
