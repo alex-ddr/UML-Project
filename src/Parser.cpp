@@ -11,38 +11,37 @@
 #include "Attribut.h"
 using namespace std;
 
-
-
 time_t parseDate(string datetime_str)
 {
-  tm tm = {};
-  istringstream ss(datetime_str);
-  ss >> get_time(&tm, "%Y-%m-%d %H:%M:%S");
+    tm tm = {};
+    istringstream ss(datetime_str);
+    ss >> get_time(&tm, "%Y-%m-%d %H:%M:%S");
 
-  if (ss.fail())
-  {
-    cerr << "Parsing failed!" << endl;
-    time_t return_failed = 0;
-    return return_failed;
-  }
+    if (ss.fail())
+    {
+        cerr << "Parsing failed!" << endl;
+        time_t return_failed = 0;
+        return return_failed;
+    }
 
-  time_t timestamp = mktime(&tm);
-  return timestamp;
+    time_t timestamp = mktime(&tm);
+    return timestamp;
 }
 
-
-
-vector<Capteur> Parser::chargerCapteurs(const string& cheminFichier) {
+vector<Capteur> Parser::chargerCapteurs(const string &cheminFichier)
+{
     vector<Capteur> capteurs;
     ifstream fichier(cheminFichier);
     string ligne;
 
-    if (!fichier.is_open()) {
+    if (!fichier.is_open())
+    {
         cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
         return capteurs;
     }
 
-    while (getline(fichier, ligne)) {
+    while (getline(fichier, ligne))
+    {
         stringstream ss(ligne);
         string id, latStr, lonStr;
 
@@ -50,7 +49,8 @@ vector<Capteur> Parser::chargerCapteurs(const string& cheminFichier) {
         getline(ss, latStr, ';');
         getline(ss, lonStr, ';');
 
-        if (!id.empty() && !latStr.empty() && !lonStr.empty()) {
+        if (!id.empty() && !latStr.empty() && !lonStr.empty())
+        {
             double latitude = stod(latStr);
             double longitude = stod(lonStr);
             Capteur capteur(id, latitude, longitude);
@@ -62,18 +62,20 @@ vector<Capteur> Parser::chargerCapteurs(const string& cheminFichier) {
     return capteurs;
 }
 
-
-std::vector<Attribut> Parser::chargerAttributs(const std::string& cheminFichier) {
+std::vector<Attribut> Parser::chargerAttributs(const std::string &cheminFichier)
+{
     vector<Attribut> attributs;
     ifstream fichier(cheminFichier);
     string ligne;
 
-    if (!fichier.is_open()) {
+    if (!fichier.is_open())
+    {
         cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
         return;
     }
-    
-    while (getline(fichier, ligne)) {
+
+    while (getline(fichier, ligne))
+    {
         stringstream ss(ligne);
         string id, unit, description;
 
@@ -81,7 +83,8 @@ std::vector<Attribut> Parser::chargerAttributs(const std::string& cheminFichier)
         getline(ss, unit, ';');
         getline(ss, description, ';');
 
-    if (!id.empty() && !unit.empty() && !description.empty()) {
+        if (!id.empty() && !unit.empty() && !description.empty())
+        {
             Attribut attribut{id, unit, description};
             attributs.push_back(attribut);
         }
@@ -91,34 +94,37 @@ std::vector<Attribut> Parser::chargerAttributs(const std::string& cheminFichier)
     return attributs;
 }
 
-
-
-void Parser::chargerMesures(const std::string& cheminFichierMesures,const std::string& cheminFichierAttributs, std::vector<Capteur>& capteurs) {
+void Parser::chargerMesures(const std::string &cheminFichierMesures, const std::string &cheminFichierAttributs, std::vector<Capteur> &capteurs)
+{
     ifstream fichier(cheminFichierMesures);
     string ligne;
     vector<Attribut> listeAttributs = chargerAttributs(cheminFichierAttributs);
 
-    if (!fichier.is_open()) {
+    if (!fichier.is_open())
+    {
         cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichierMesures << endl;
         return;
     }
 
-    while (getline(fichier, ligne)) {
+    while (getline(fichier, ligne))
+    {
         stringstream ss(ligne);
         string timestamp, idCapteur, idAttribut, valeurStr;
-
 
         getline(ss, timestamp, ';');
         getline(ss, idCapteur, ';');
         getline(ss, idAttribut, ';');
         getline(ss, valeurStr, ';');
 
-        if (!timestamp.empty() && !idCapteur.empty() && !idAttribut.empty() && !valeurStr.empty()) {
+        if (!timestamp.empty() && !idCapteur.empty() && !idAttribut.empty() && !valeurStr.empty())
+        {
             double valeur = stod(valeurStr);
 
             Attribut attribut;
-            for (Attribut a : listeAttributs){
-                if (idAttribut == a.attributId){
+            for (Attribut a : listeAttributs)
+            {
+                if (idAttribut == a.attributId)
+                {
                     attribut = a;
                     break;
                 }
@@ -126,9 +132,11 @@ void Parser::chargerMesures(const std::string& cheminFichierMesures,const std::s
 
             Mesure mesure(parseDate(timestamp), valeur, attribut);
 
-            for (Capteur& capteur : capteurs) {
-                if (capteur.getCapteurId() == idCapteur) {
-                    capteur.getListeMesures().push_back(mesure); // si il y a une erreur, regarder ici 
+            for (Capteur &capteur : capteurs)
+            {
+                if (capteur.getCapteurId() == idCapteur)
+                {
+                    capteur.getListeMesures().push_back(mesure); // si il y a une erreur, regarder ici
                     break;
                 }
             }
