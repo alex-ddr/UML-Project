@@ -110,7 +110,8 @@ void demanderListerCapteursSimilaires(Application app)
 int main()
 {
     Application app = Application();
-    // app.init();
+    if (!app.chargerDonnees("../data/sensors.csv", "../data/users.csv", "../data/attributes.csv", "../data/measurements.csv"))
+        cout << "Erreur au chargement des données." << endl;
     string role;
     cout << "Veuillez entrer votre rôle :" << endl;
     cout << "- GOUVERNEMENT (g/G)" << endl;

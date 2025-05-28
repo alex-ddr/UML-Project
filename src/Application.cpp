@@ -10,13 +10,16 @@
 #include "Parser.h"
 using namespace std;
 
-bool Application::chargerDonnees(const std::string &cheminFichierSensors, const string &cheminFichierUsers, const std::string &cheminFichierAttributs, const string &cheminFichierMesures) {
+bool Application::chargerDonnees(const std::string &cheminFichierSensors, const string &cheminFichierUsers, const std::string &cheminFichierAttributs, const string &cheminFichierMesures)
+{
 
     listeTousLesCapteurs = Parser::chargerCapteurs(cheminFichierSensors, cheminFichierUsers);
-    Parser :: chargerMesures(cheminFichierMesures, cheminFichierAttributs, listeTousLesCapteurs);
+    Parser ::chargerMesures(cheminFichierMesures, cheminFichierAttributs, listeTousLesCapteurs);
+
+    if (listeTousLesCapteurs.empty())
+        return false;
+    return true;
 }
-
-
 
 // fonction pour calculer la distance euclidienne entre deux points
 float distance(float lat1, float lon1, float lat2, float lon2)
