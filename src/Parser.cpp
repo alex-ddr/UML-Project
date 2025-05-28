@@ -164,7 +164,7 @@ void Parser::chargerMesures(const std::string &cheminFichierMesures, const std::
             {
                 if (capteur.getCapteurId() == idCapteur)
                 {
-                    //capteur.getListeMesures().push_back(mesure); // si il y a une erreur, regarder ici
+                    capteur.ajouterMesure(mesure); 
                     break;
                 }
             }
