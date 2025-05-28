@@ -8,7 +8,7 @@
 class Capteur
 {
   private:
-    long capteurId;
+    string capteurId;
     float latitude;
     float longitude;
     bool confiance;
@@ -17,7 +17,7 @@ class Capteur
 
   public:
     // Constructeur
-    Capteur(long id, float lat, float lon, bool conf, bool priv, std::vector<Mesure> listeMesures)
+    Capteur(string id, float lat, float lon, bool conf = true, bool priv = false, std::vector<Mesure> listeMesures = {})
         : capteurId(id), latitude(lat), longitude(lon), confiance(conf), prive(priv), listeMesures(listeMesures)
     {}
 
@@ -25,7 +25,7 @@ class Capteur
     bool estCapteurDeConfiance();
 
     // Getters
-    long getCapteurId() const { return capteurId; }
+    string getCapteurId() const { return capteurId; }
     float getLatitude() const { return latitude; }
     float getLongitude() const { return longitude; }
     bool isConfiance() const { return confiance; }
@@ -33,7 +33,7 @@ class Capteur
     std::vector<Mesure> getListeMesures() const { return listeMesures; }
 
     // Setters
-    void setCapteurId(long id) { capteurId = id; }
+    void setCapteurId(string id) { capteurId = id; }
     void setLatitude(float lat) { latitude = lat; }
     void setLongitude(float lon) { longitude = lon; }
     void setConfiance(bool conf) { confiance = conf; }

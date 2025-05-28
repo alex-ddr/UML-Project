@@ -1,5 +1,5 @@
-#ifndef MESURES_H
-#define MESURES_H
+#ifndef MESURE_H
+#define MESURE_H
 
 #include <ctime>
 #include "Attribut.h"
