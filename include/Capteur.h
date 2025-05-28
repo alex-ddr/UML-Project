@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Mesure.h"
+#include <iostream>
 
 class Capteur
 {

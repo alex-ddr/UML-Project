@@ -2,6 +2,7 @@
 #define ATTRIBUT_H
 
 #include <string>
+#include <iostream>
 
 // Attribut n'est pas une Classe mais un Struct.
 // La seule chose qui change, c'est que les membres sont publics par défaut

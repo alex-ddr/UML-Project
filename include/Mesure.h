@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include "Attribut.h"
+#include <iostream>
 
 class Mesure
 {
