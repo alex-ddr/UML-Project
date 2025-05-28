@@ -12,10 +12,12 @@ class Parser
 private:
 public:
     static time_t parseDate(std::string datetime_str);
-    std::vector<Capteur> chargerCapteurs(const std::string &cheminFichier);
+    std::vector<Capteur> chargerCapteurs(const std::string &cheminFichierSensors, const string &cheminFichierUsers);
     std::vector<Attribut> chargerAttributs(const std::string &cheminFichier);
     void chargerMesures(const std::string &cheminFichierMesures, const std::string &cheminFichierAttributs, std::vector<Capteur> &capteurs);
-    std::vector<Personne> chargerPersonnes(const std::string &cheminFichier);
+    std::vector<string> chargerCapteursPrive(const std::string& cheminFichier) ;
+
+
 };
 
 #endif

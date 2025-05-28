@@ -29,15 +29,16 @@ time_t Parser::parseDate(string datetime_str)
     return timestamp;
 }
 
-vector<Capteur> Parser::chargerCapteurs(const string &cheminFichier)
+vector<Capteur> Parser::chargerCapteurs(const string &cheminFichierSensors, const string &cheminFichierUsers)
 {
+    vector<string> capteursPrives = chargerCapteursPrive(cheminFichierUsers);
     vector<Capteur> capteurs;
-    ifstream fichier(cheminFichier);
+    ifstream fichier(cheminFichierSensors);
     string ligne;
 
     if (!fichier.is_open())
     {
-        cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
+        cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichierSensors << endl;
         return capteurs;
     }
 
@@ -54,13 +55,16 @@ vector<Capteur> Parser::chargerCapteurs(const string &cheminFichier)
         {
             double latitude = stod(latStr);
             double longitude = stod(lonStr);
-            Capteur capteur(id, latitude, longitude);
+            bool prive = false;
+            for (string nomCapteur : capteursPrives){
+                if (nomCapteur == id){
+                    prive = true;
+                }
+            }
+            Capteur capteur(id, latitude, longitude, true, prive);
             capteurs.push_back(capteur);
         }
     }
-
-    fichier.close();
-    return capteurs;
 }
 
 std::vector<Attribut> Parser::chargerAttributs(const std::string &cheminFichier)
