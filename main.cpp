@@ -35,7 +35,6 @@ void afficherMenuAdmin()
     cout << "6. Faire une maintenance" << endl;
     cout << "7. Quitter" << endl;
 }
-
 int main()
 {
     string role;
@@ -46,114 +45,144 @@ int main()
     cout << "> ";
     cin >> role;
 
-    // Normalise le rôle (majuscule uniquement pour simplifier)
-    for (auto &c : role)
-        c = toupper(c);
-
-    int choix = 0;
-    do
+    char choix = '0';
+    bool quitter_programme = false;
+    while (!quitter_programme)
     {
         if (role == "GOUVERNEMENT" || role == "g" || role == "G")
         {
-            afficherMenuGouvernement();
-            cout << "> ";
-            cin >> choix;
-            switch (choix)
+            bool choix_valide = false;
+            while (!choix_valide)
             {
-            case 1:
-            {
-                cout << "-> Moyenne dans une zone (GOUVERNEMENT)" << endl;
-                break;
-            }
-            case 2:
-                cout << "-> Estimation au point (GOUVERNEMENT)" << endl;
-                break;
-            case 3:
-                cout << "-> Classification capteurs (GOUVERNEMENT)" << endl;
-                break;
-            case 4:
-                cout << "-> Analyse capteur privé (GOUVERNEMENT)" << endl;
-                break;
-            case 5:
-                cout << "-> Mesure de performance (GOUVERNEMENT)" << endl;
-                break;
-            case 6:
-                cout << "-> Fin du programme." << endl;
-                break;
-            default:
-                cout << "Choix invalide." << endl;
-                break;
+                afficherMenuGouvernement();
+                cout << "> ";
+                cin >> choix;
+                switch (choix)
+                {
+                case '1':
+                    cout << "-> Moyenne dans une zone (GOUVERNEMENT)" << endl;
+                    choix_valide = true;
+                    break;
+                case '2':
+                    cout << "-> Estimation au point (GOUVERNEMENT)" << endl;
+                    choix_valide = true;
+                    break;
+                case '3':
+                    cout << "-> Classification capteurs (GOUVERNEMENT)" << endl;
+                    choix_valide = true;
+                    break;
+                case '4':
+                    cout << "-> Analyse capteur privé (GOUVERNEMENT)" << endl;
+                    choix_valide = true;
+                    break;
+                case '5':
+                    cout << "-> Mesure de performance (GOUVERNEMENT)" << endl;
+                    choix_valide = true;
+                    break;
+                case '6':
+                    cout << "-> Fin du programme." << endl;
+                    quitter_programme = true;
+                    choix_valide = true;
+                    break;
+                default:
+                    cout << "Choix invalide." << endl;
+                    break;
+                }
             }
         }
         else if (role == "UTILISATEUR" || role == "u" || role == "U")
         {
-            afficherMenuUtilisateur();
-            cout << "> ";
-            cin >> choix;
-            switch (choix)
+            bool choix_valide = false;
+            while (!choix_valide)
             {
-            case 1:
-                cout << "-> Moyenne dans une zone (UTILISATEUR)" << endl;
-                break;
-            case 2:
-                cout << "-> Estimation de qualité (UTILISATEUR)" << endl;
-                break;
-            case 3:
-                cout << "-> Classification capteurs (UTILISATEUR)" << endl;
-                break;
-            case 4:
-                cout << "-> Consultation des points" << endl;
-                break;
-            case 5:
-                cout << "-> Fin du programme." << endl;
-                break;
-            default:
-                cout << "Choix invalide." << endl;
-                break;
+                afficherMenuUtilisateur();
+                cout << "> ";
+                cin >> choix;
+                switch (choix)
+                {
+                case '1':
+                    cout << "-> Moyenne dans une zone (UTILISATEUR)" << endl;
+                    choix_valide = true;
+                    break;
+                case '2':
+                    cout << "-> Estimation de qualité (UTILISATEUR)" << endl;
+                    choix_valide = true;
+                    break;
+                case '3':
+                    cout << "-> Classification capteurs (UTILISATEUR)" << endl;
+                    choix_valide = true;
+                    break;
+                case '4':
+                    cout << "-> Consultation des points" << endl;
+                    choix_valide = true;
+                    break;
+                case '5':
+                    cout << "-> Fin du programme." << endl;
+                    quitter_programme = true;
+                    choix_valide = true;
+                    break;
+                default:
+                    cout << "Choix invalide." << endl;
+                    break;
+                }
             }
         }
         else if (role == "ADMIN" || role == "a" || role == "A")
         {
-            afficherMenuAdmin();
-            cout << "> ";
-            cin >> choix;
-            switch (choix)
+            bool choix_valide = false;
+            while (!choix_valide)
             {
-            case 1:
-                cout << "-> Moyenne dans une zone (ADMIN)" << endl;
-                break;
-            case 2:
-                cout << "-> Estimation de qualité (ADMIN)" << endl;
-                break;
-            case 3:
-                cout << "-> Classification capteurs (ADMIN)" << endl;
-                break;
-            case 4:
-                cout << "-> Analyse capteur privé (ADMIN)" << endl;
-                break;
-            case 5:
-                cout << "-> Mesure de performance (ADMIN)" << endl;
-                break;
-            case 6:
-                cout << "-> Maintenance (ADMIN)" << endl;
-                break;
-            case 7:
-                cout << "-> Fin du programme." << endl;
-                break;
-            default:
-                cout << "Choix invalide." << endl;
-                break;
+                afficherMenuAdmin();
+                cout << "> ";
+                cin >> choix;
+                switch (choix)
+                {
+                case '1':
+                    cout << "-> Moyenne dans une zone (ADMIN)" << endl;
+                    choix_valide = true;
+                    break;
+                case '2':
+                    cout << "-> Estimation de qualité (ADMIN)" << endl;
+                    choix_valide = true;
+                    break;
+                case '3':
+                    cout << "-> Classification capteurs (ADMIN)" << endl;
+                    choix_valide = true;
+                    break;
+                case '4':
+                    cout << "-> Analyse capteur privé (ADMIN)" << endl;
+                    choix_valide = true;
+                    break;
+                case '5':
+                    cout << "-> Mesure de performance (ADMIN)" << endl;
+                    choix_valide = true;
+                    break;
+                case '6':
+                    cout << "-> Maintenance (ADMIN)" << endl;
+                    choix_valide = true;
+                    break;
+                case '7':
+                    cout << "-> Fin du programme." << endl;
+                    quitter_programme = true;
+                    choix_valide = true;
+                    break;
+                default:
+                    cout << "Choix invalide." << endl;
+                    break;
+                }
             }
         }
         else
         {
-            cout << "Rôle inconnu. Veuillez relancer le programme." << endl;
-            break;
+            cout << "Rôle inconnu." << endl;
+            cout << "Veuillez entrer votre rôle :" << endl;
+            cout << "- GOUVERNEMENT (g/G)" << endl;
+            cout << "- UTILISATEUR (u/U)" << endl;
+            cout << "- ADMIN (a/A)" << endl;
+            cout << "> ";
+            cin >> role;
         }
-
-    } while ((role == "GOUVERNEMENT" && choix != 6) ||
-             (role == "UTILISATEUR" && choix != 5) ||
-             (role == "ADMIN" && choix != 7));
+    }
 
     return 0;
 }
