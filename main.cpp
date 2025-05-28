@@ -3,6 +3,8 @@
 
 using namespace std;
 
+// POUR CONVERTIR TIME_T : enlever 1970 années à l'année en question et convertir en secondes
+
 void afficherMenuGouvernement()
 {
     cout << "\nRôle : GOUVERNEMENT" << endl;
