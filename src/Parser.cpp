@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <string>
 #include <vector>
 #include <fstream>
@@ -170,6 +171,8 @@ void Parser::chargerMesures(const std::string& cheminFichierMesures,const std::s
     fichier.close();
 }
 =======
+=======
+>>>>>>> b1cefd121896ca8a8a9a5e2cc85140110885bb83
 #include <string>
 #include <vector>
 #include <fstream>
@@ -267,8 +270,8 @@ std::vector<Attribut> Parser::chargerAttributs(const std::string &cheminFichier)
     return attributs;
 }
 /*
-std::vector<Personne> Parser::chargerPersonnes(const std::string& cheminFichier) ; {
-    vector<Attribut> attributs;
+std::vector<string> Parser::chargerCapteursPrive(const std::string& cheminFichier) {
+    vector<string> capteurs;
     ifstream fichier(cheminFichier);
     string ligne;
 
@@ -276,80 +279,72 @@ std::vector<Personne> Parser::chargerPersonnes(const std::string& cheminFichier)
         cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
         return;
     }
-
+    
     while (getline(fichier, ligne)) {
         stringstream ss(ligne);
-        string id, unit, description;
+        string id, capteurId;
 
         getline(ss, id, ';');
-        getline(ss, unit, ';');
-        getline(ss, description, ';');
+        getline(ss, capteurId, ';');
 
-    if (!id.empty() && !unit.empty() && !description.empty()) {
-            Attribut attribut{id, unit, description};
-            attributs.push_back(attribut);
+    if (!id.empty() && !capteurId.empty()) {
+            capteurs.push_back(capteurId);
         }
     }
 
     fichier.close();
-    return attributs;
+    return capteurs;
 }
 
-
 */
-
 void Parser::chargerMesures(const std::string &cheminFichierMesures, const std::string &cheminFichierAttributs, std::vector<Capteur> &capteurs)
 {
+    ifstream fichier(cheminFichierMesures);
+    string ligne;
+    vector<Attribut> listeAttributs = chargerAttributs(cheminFichierAttributs);
 
-    void Parser::chargerMesures(const std::string &cheminFichierMesures, const std::string &cheminFichierAttributs, std::vector<Capteur> &capteurs)
+    if (!fichier.is_open())
     {
-        ifstream fichier(cheminFichierMesures);
-        string ligne;
-        vector<Attribut> listeAttributs = chargerAttributs(cheminFichierAttributs);
+        cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichierMesures << endl;
+        return;
+    }
 
-        if (!fichier.is_open())
+    while (getline(fichier, ligne))
+    {
+        stringstream ss(ligne);
+        string timestamp, idCapteur, idAttribut, valeurStr;
+
+        getline(ss, timestamp, ';');
+        getline(ss, idCapteur, ';');
+        getline(ss, idAttribut, ';');
+        getline(ss, valeurStr, ';');
+
+        if (!timestamp.empty() && !idCapteur.empty() && !idAttribut.empty() && !valeurStr.empty())
         {
-            cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichierMesures << endl;
-            return;
-        }
+            double valeur = stod(valeurStr);
 
-        while (getline(fichier, ligne))
-        {
-            stringstream ss(ligne);
-            string timestamp, idCapteur, idAttribut, valeurStr;
-
-            getline(ss, timestamp, ';');
-            getline(ss, idCapteur, ';');
-            getline(ss, idAttribut, ';');
-            getline(ss, valeurStr, ';');
-
-            if (!timestamp.empty() && !idCapteur.empty() && !idAttribut.empty() && !valeurStr.empty())
+            Attribut attribut;
+            for (Attribut a : listeAttributs)
             {
-                double valeur = stod(valeurStr);
-
-                Attribut attribut;
-                for (Attribut a : listeAttributs)
+                if (idAttribut == a.attributId)
                 {
-                    if (idAttribut == a.attributId)
-                    {
-                        attribut = a;
-                        break;
-                    }
+                    attribut = a;
+                    break;
                 }
+            }
 
-                Mesure mesure(parseDate(timestamp), valeur, attribut);
+            Mesure mesure(parseDate(timestamp), valeur, attribut);
 
-                for (Capteur &capteur : capteurs)
+            for (Capteur &capteur : capteurs)
+            {
+                if (capteur.getCapteurId() == idCapteur)
                 {
-                    if (capteur.getCapteurId() == idCapteur)
-                    {
-                        capteur.getListeMesures().push_back(mesure); // si il y a une erreur, regarder ici
-                        break;
-                    }
+                    //capteur.getListeMesures().push_back(mesure); // si il y a une erreur, regarder ici
+                    break;
                 }
             }
         }
-
-        fichier.close();
     }
->>>>>>> 2356db823f670b5fd491318bd7dd829802439959
+
+    fichier.close();
+}

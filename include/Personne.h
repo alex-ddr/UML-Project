@@ -12,6 +12,7 @@ class Personne
         std::string identifiant;
         std::string mdp;
         std::vector<Capteur> listeCapteursPersonne;
+        
 
     public:
         // Constructeurs
