@@ -149,7 +149,7 @@ int main()
   cout << "----------------------------------------\n";
   // Chargement de la base de données
   Application appli;
-  appli.chargerDonnees("../data/sensors.csv", "../data/users.csv", "../data/attributes.csv", "../data/measurements.csv");
+  appli.chargerDonnees("./data/sensors.csv", "./data/users.csv", "./data/attributes.csv", "./data/measurements.csv");
   // Test sur toute la base de données
   runTest("Test toute la bdd", appli, appli.getListeTousLesCapteurs().front());
   printf("premier capteur : %s\n", appli.getListeTousLesCapteurs().front().getCapteurId().c_str());
