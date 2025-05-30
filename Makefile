@@ -1,46 +1,54 @@
 # Répertoires
 INCLUDES = -Iinclude
 SRC_DIR = src
-BUILD_DIR = Build
+BUILD_DIR = build
 
 # Compilateur
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 $(INCLUDES)
 
-# Fichiers sources communs (sans le main)
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+# Fichiers
+SRCS = $(filter-out $(SRC_DIR)/main.cpp $(SRC_DIR)/maintest.cpp,$(wildcard $(SRC_DIR)/*.cpp))
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
+MAIN_OBJ = $(BUILD_DIR)/main.o
+MAINTEST_OBJ = $(BUILD_DIR)/maintest.o
 
-# Noms des exécutables
+# Exécutables
 TARGET = $(BUILD_DIR)/app
 TEST_TARGET = $(BUILD_DIR)/test
 
 # Règle par défaut
 all: $(TARGET)
 
-# Création du répertoire Build si besoin
+# Crée build/ si nécessaire
+$(TARGET): | $(BUILD_DIR)
+$(TEST_TARGET): | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-# Compilation de l'app principale avec main.cpp
-$(TARGET): $(BUILD_DIR) $(SRCS) main.cpp
-	$(CXX) $(CXXFLAGS) -o $@ $(SRCS) main.cpp
+# Compilation
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Compilation des tests avec maintest.cpp
-$(TEST_TARGET): $(BUILD_DIR) $(SRCS) maintest.cpp
-	$(CXX) $(CXXFLAGS) -o $@ $(SRCS) maintest.cpp
+$(TARGET): $(OBJS) $(MAIN_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
 
-# Règle explicite pour build de test
+$(TEST_TARGET): $(OBJS) $(MAINTEST_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+# Compilation de temp seul avec son main
+temp: src/temp.cpp
+	$(CXX) $(CXXFLAGS) -DCOMPILE_TEMP_MAIN -o build/temp src/temp.cpp
+
+
 test: $(TEST_TARGET)
 
-# Nettoyer
 clean:
-	rm -f $(BUILD_DIR)/app $(BUILD_DIR)/test
+	rm -rf $(BUILD_DIR)/*
 
-# Exécuter l'app
 run: $(TARGET)
 	./$(TARGET)
 
-# Exécuter les tests
 runtest: $(TEST_TARGET)
 	./$(TEST_TARGET)
 
