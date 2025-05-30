@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <limits>
 #include "Application.h"
 #include "Parser.h"
 
@@ -46,8 +45,6 @@ void demanderMoyenneQualiteAir(Application app)
     double latitude, longitude, rayon;
     string dateDebut, dateFin;
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
     cout << "Entrez la latitude : ";
     while (!(cin >> latitude) || latitude < -90.0 || latitude > 90.0)
     {
@@ -80,14 +77,36 @@ void demanderMoyenneQualiteAir(Application app)
         debut = Parser::parseDate(dateDebut);
     }
 
-    cout << "Entrez la date de fin (YYYY-MM-DD HH:MM:SS) : ";
-    getline(cin, dateFin);
-    time_t fin = Parser::parseDate(dateFin);
-    while (fin < debut)
+
+    string reponse_date_fin;
+    cout << endl; 
+    cout << "La date de fin est facultative. " << endl; 
+    cout << "Par défaut, date_fin = date_début + 24H " << endl;
+    cout << "Voulez vous entrer une date de fin ? (o/n)" << endl;
+    cout << "> ";
+    cin >> reponse_date_fin;
+    cin.ignore(); 
+
+    
+    
+    while (reponse_date_fin != "o" && reponse_date_fin != "n")
     {
-        cout << "Date de fin invalide. Elle doit être supérieure à la date de début : ";
+        cout << "Réponse invalide. Entrez 'o' si oui, 'n' sinon : ";
+        getline(cin, reponse_date_fin);
+    }
+
+    time_t fin = -1;
+    if(reponse_date_fin == "o")
+    {
+        cout << "Entrez la date de fin (YYYY-MM-DD HH:MM:SS) : ";
         getline(cin, dateFin);
         fin = Parser::parseDate(dateFin);
+        while (fin < debut)
+        {
+            cout << "Date de fin invalide. Elle doit être supérieure à la date de début : ";
+            getline(cin, dateFin);
+            fin = Parser::parseDate(dateFin);
+        }
     }
 
     cout << "  Moyenne qualité air :" << "\n";

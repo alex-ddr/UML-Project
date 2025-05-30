@@ -25,13 +25,9 @@ et l'application permet d'observer leur impact.Enfin, AirWatcher propose une
 interface en ligne de commande locale sur le serveur, permettant aux différents 
 utilisateurs d'interroger le système en fonction de leurs besoins.
 
-Comment lancer le fichier de tests :
-- exécuter la commande "make test" dans votre terminal, 
-- puis lancer l'application avec "./build/test"
-
-
-Comment lancer l'application :
-- exécuter la commande "make" dans votre terminal, 
-- puis lancer l'application avec "./build/app"
-- laisser vous guider par les instructions de l'application, et naviguer à travers les différentes options avec votre pavé numérique
-
+Les commandes utiles pour cette application : 
+- "make" construit l'exécutable "./buid/app"
+- "make run" construit et exécute "./buid/app"
+- "maketest" construit l'exécutable "./buid/test"
+- "make test" construit et exécute "./buid/test"
+- "make clean" supprime tous les exécutables 
