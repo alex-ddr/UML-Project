@@ -28,12 +28,16 @@ int main()
   // Lambda de test
   auto runTest = [&](const std::string &titre, Application &app, Capteur &ref)
   {
+    // ------------------------------------------- A MODIFIER JE CROIS
+    time_t debut = time(nullptr) - 3600;
+    time_t fin = time(nullptr);
+    // ------------------------------------------
     cout << titre << "\n";
     double duree = mesurerTempsExecution(
-        &Application::listerCapteursSimilaires, &app, ref);
+        &Application::listerCapteursSimilaires, &app, ref, debut, fin);
     cout << "  Temps d'exécution : " << duree << " s\n";
 
-    auto res = app.listerCapteursSimilaires(ref);
+    auto res = app.listerCapteursSimilaires(ref, debut, fin);
     std::cout << "  Nombre de capteurs similaires : " << res.size() << "\n";
     for (auto &p : res)
     {
@@ -144,15 +148,13 @@ int main()
     app.ajouterCapteur(E);
     runTest("Test 6 – Mesures identiques", app, A);
   }
-  cout << "----------------------------------------\n";
-  cout << "Test toute la bdd\n";
-  cout << "----------------------------------------\n";
+
   // Chargement de la base de données
-  Application appli;
-  appli.chargerDonnees("./data/sensors.csv", "./data/users.csv", "./data/attributes.csv", "./data/measurements.csv");
+  Application app;
+  app.chargerDonnees("./data/sensors.csv", "./data/users.csv", "./data/attributes.csv", "./data/measurements.csv");
   // Test sur toute la base de données
-  runTest("Test toute la bdd", appli, appli.getListeTousLesCapteurs().front());
-  printf("premier capteur : %s\n", appli.getListeTousLesCapteurs().front().getCapteurId().c_str());
+  runTest("Test toute la bdd", app, app.getListeTousLesCapteurs().front());
+  printf("premier capteur : %s\n", app.getListeTousLesCapteurs().front().getCapteurId().c_str());
   cout << "----------------------------------------\n";
   cout << "Tests de moyenneQualiteAir\n";
   cout << "----------------------------------------\n";
@@ -168,14 +170,20 @@ int main()
     cout << "  Temps d'exécution : " << duree << " s\n";
 
     auto results = app.moyenneQualiteAir(lat, lon, debut, fin, rayon);
-    cout << "  Moyenne qualité air :" << "\n";
-    for (const auto &p : results)
+    if (not results.empty())
     {
-      cout << "    " << p.first << " : " << p.second << "\n";
+      cout << "  Moyenne qualité air :" << "\n";
+      for (const auto &p : results)
+      {
+        cout << "    " << p.first << " : " << p.second << "\n";
+      }
     }
-    cout << "----------------------------------------\n";
+
+    else
+      cout << "Aucun capteur trouvé dans ce périmètre et pour cette période. Les valeurs ci-dessous ne sont pas à considérer. " << endl;
+
+    cout << "\n----------------------------------------\n\n";
   };
-  Application app;
 
   // — Test 1 :  Aucun capteur dans le rayon peu import le timestap
   float lat = 41.4, lon = -90.6, perimeter = 5.0;
@@ -184,7 +192,7 @@ int main()
   runTest2("Test 1 – Aucun capteur dans le rayon peu import le timestap", app, lat, lon, debut, fin, perimeter);
 
   // — Test 2 : Un ou plusieurs capteurs dans le rayon pour un timestamp valide
-  lat = 44.8, lon = 4.6, perimeter = 10.0;
+  lat = 44.8, lon = 4.6, perimeter = 100.0;
   debut = Parser::parseDate("2019-02-04 12:00:00");
   fin = debut + 24 * 3600 * 7;
   runTest2("Test 2 – Un ou plusieurs capteurs dans le rayon pour un timestamp valide", app, lat, lon, debut, fin, perimeter);

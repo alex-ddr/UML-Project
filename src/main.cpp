@@ -77,18 +77,15 @@ void demanderMoyenneQualiteAir(Application app)
         debut = Parser::parseDate(dateDebut);
     }
 
-
     string reponse_date_fin;
-    cout << endl; 
-    cout << "La date de fin est facultative. " << endl; 
+    cout << endl;
+    cout << "La date de fin est facultative. " << endl;
     cout << "Par défaut, date_fin = date_début + 24H " << endl;
     cout << "Voulez vous entrer une date de fin ? (o/n)" << endl;
     cout << "> ";
     cin >> reponse_date_fin;
-    cin.ignore(); 
+    cin.ignore();
 
-    
-    
     while (reponse_date_fin != "o" && reponse_date_fin != "n")
     {
         cout << "Réponse invalide. Entrez 'o' si oui, 'n' sinon : ";
@@ -96,7 +93,7 @@ void demanderMoyenneQualiteAir(Application app)
     }
 
     time_t fin = -1;
-    if(reponse_date_fin == "o")
+    if (reponse_date_fin == "o")
     {
         cout << "Entrez la date de fin (YYYY-MM-DD HH:MM:SS) : ";
         getline(cin, dateFin);
@@ -109,17 +106,25 @@ void demanderMoyenneQualiteAir(Application app)
         }
     }
 
-    cout << "  Moyenne qualité air :" << "\n";
-
-    for (const auto &p : app.moyenneQualiteAir(latitude, longitude, debut, fin, rayon))
+    map<string, int> res = app.moyenneQualiteAir(latitude, longitude, debut, fin, rayon);
+    if (not res.empty())
     {
-        cout << "    " << p.first << " : " << p.second << "\n";
+        cout << "  Moyenne qualité air :" << "\n";
+        for (const auto &p : res)
+        {
+            cout << "    " << p.first << " : " << p.second << "\n";
+        }
     }
+
+    else
+        cout << "Aucun capteur trouvé dans ce périmètre et pour cette période. Les valeurs ci-dessous ne sont pas à considérer. " << endl;
+
+    cout << "\n----------------------------------------\n\n";
 }
 
 void demanderListerCapteursSimilaires(Application app)
 {
-    // Demander l'identifiant du capteur 
+    // Demander l'identifiant du capteur
     int capteurId;
     cout << "Entrez l'identifiant du capteur (0 à 99) : ";
     while (!(cin >> capteurId) || capteurId < 0 || capteurId > 99)
@@ -163,7 +168,6 @@ void demanderListerCapteursSimilaires(Application app)
         cout << endl;
         cout << "Capteur : " << c.getCapteurId() << endl;
         cout << "Variance (plus la variance est petite, plus le capteur est similaire) : " << d << endl;
-        
     }
 }
 

@@ -50,10 +50,6 @@ $(TEST_TARGET): $(OBJS) $(MAINTEST_OBJ)
 
 
 
-# Compilation de temp seul avec son main (et éviter erreur 'multiple definition of main')
-temp: src/temp.cpp
-	$(CXX) $(CXXFLAGS) -DCOMPILE_TEMP_MAIN -o build/temp src/temp.cpp
-
 # commande 'make run' pour compiler et exécuter l'app 
 run: $(TARGET)
 	./$(TARGET)

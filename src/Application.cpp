@@ -73,7 +73,6 @@ Capteur Application::trouverCapteurParId(int id)
     return return_cap;
 }
 
-
 map<string, int> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
 {
     /*
@@ -100,10 +99,10 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
     int nbCapteurs[4] = {0};
     float moyennesTotales[4] = {0};
 
-    if (fin <=0)
+    if (fin <= 0)
     {
         fin = debut + 24 * 3600;
-    }// si pas de fin définie, alors par défaut la fin est le jour de début + 1 (période d'un jour par défaut)
+    } // si pas de fin définie, alors par défaut la fin est le jour de début + 1 (période d'un jour par défaut)
 
     for (const Capteur &c : listeTousLesCapteurs)
     {
@@ -114,7 +113,6 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
 
         float moyennes[4] = {0};
         int nbMesures[4] = {0};
-
 
         // Pour chaque mesure du capteur,
         // qui est bien incluse dans l'intervalle de temps souhaité,
@@ -151,22 +149,22 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
     // Enfin, la moyenne finale par gaz (moyenne des moyennes de tous les capteurs)
     for (int i = 0; i < 4; ++i)
     {
-        if (nbCapteurs[i] > 0){
+        if (nbCapteurs[i] > 0)
+        {
             moyennesTotales[i] /= nbCapteurs[i];
             capteurs_touves = true;
         }
         moyennesParGaz[gaz[i]] = moyennesTotales[i];
-        cout << "moyennesParGaz pour gaz "<< i << " " << moyennesTotales[i] << endl;
+        // cout << "moyennesParGaz pour gaz " << i << " " << moyennesTotales[i] << endl;
     }
 
-    if (capteurs_touves == false){
-        cout << "Aucun capteur trouvé dans ce prémière et pour cette période. Les valeurs ci-dessous ne sont pas à considerer. " << endl;
+    if (capteurs_touves == false)
+    {
+        return map<string, int>();
     }
 
     return calculerIndicesATMO(moyennesParGaz);
 }
-
-
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur, time_t debut, time_t fin) const
 {
@@ -193,7 +191,7 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
             if (m.getTimestamp() >= debut && m.getTimestamp() <= fin)
                 mesuresAutre.push_back(m);
 
-        // calcul de la somme des écarts-type entre les valeurs du capteur de référence et d'un autre capteur  
+        // calcul de la somme des écarts-type entre les valeurs du capteur de référence et d'un autre capteur
         float sommeDesEcartsType = 0;
         int nbValeurs = 0;
         for (Mesure &mRef : mesuresCapteurRefDansIntervalleTemps)
@@ -211,7 +209,7 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
             }
         }
 
-        // calcul de la variance (racine de l'écart-type), 
+        // calcul de la variance (racine de l'écart-type),
         // et ajout de cet autre capteur dans la liste des capteurs similaires
         if (nbValeurs > 0)
         {
