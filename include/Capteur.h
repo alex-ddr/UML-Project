@@ -24,12 +24,10 @@ public:
           bool conf = true,
           bool priv = false,
           std::vector<Mesure> lm = {})
-      : capteurId(id), latitude(lat), longitude(lon), confiance(conf), prive(priv), listeMesures(std::move(lm))
-  {
-  }
+      : capteurId(id), latitude(lat), longitude(lon), confiance(conf), prive(priv), listeMesures(std::move(lm)) {}
 
   // Méthodes
-  bool estCapteurDeConfiance();
+  bool estCapteurDeConfiance() {return true;}
   void ajouterMesure(const Mesure &mesure) { listeMesures.push_back(mesure); }
 
   // Getters

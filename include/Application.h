@@ -22,7 +22,7 @@ public:
     // Méthodes
     std::map<std::string, int> moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const;
     float estimerQualiteAir(float latitude, float longitude) const;
-    std::vector<std::pair<Capteur, float>> listerCapteursSimilaires(Capteur &capteur) const;
+    std::vector<std::pair<Capteur, float>> listerCapteursSimilaires(Capteur &capteur, time_t debut, time_t fin) const;
     void ajouterPointUtilisateur(Utilisateur &user) const;
     void analyserCapteurPrive() const;
     void mesurerAlgorithme() const;

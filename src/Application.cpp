@@ -168,71 +168,64 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
 
 
 
-vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur) const
+vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur, time_t debut, time_t fin) const
 {
-    // 1) Date max
-    auto mesuresRefFull = capteur.getListeMesures();
-    time_t dateMax = 0;
-    for (auto &m : mesuresRefFull)
-        if (m.getTimestamp() > dateMax)
-            dateMax = m.getTimestamp();
+    // filtrage des mesures du capteur de référence entre debut et fin
+    vector<Mesure> mesuresCapteurRef = capteur.getListeMesures();
+    vector<Mesure> mesuresCapteurRefDansIntervalleTemps;
+    for (Mesure &m : mesuresCapteurRef)
+        if (m.getTimestamp() >= debut && m.getTimestamp() <= fin)
+            mesuresCapteurRefDansIntervalleTemps.push_back(m);
 
-    // 2) Date début
-    time_t dateDebut = dateMax - 7 * 24 * 3600;
-
-    // 3) Filtrer les mesures de référence
-    vector<Mesure> mesuresRef;
-    for (auto &m : mesuresRefFull)
-        if (m.getTimestamp() >= dateDebut && m.getTimestamp() <= dateMax)
-            mesuresRef.push_back(m);
-
-    // 4) Prépare le résultat
-    vector<pair<Capteur, float>> capteursSim;
-
-    // 5) Parcours tous les capteurs
-    for (auto &autre : listeTousLesCapteurs)
+    vector<pair<Capteur, float>> capteursSimilaires;
+    for (Capteur autre : listeTousLesCapteurs)
     {
+        // on ne prend pas le capteur de référence
         if (autre == capteur)
             continue;
         // si on gère la fiabilité RAJOUTER UN TRUC
         if (!autre.isConfiance())
             continue; // on ne prend pas les capteurs non fiables
-        // 5b) filtre ses mesures
+
+        // on ajoute à la liste mesuresAutre les données des autres capteurs, comprises entre debut et fin
         vector<Mesure> mesuresAutre;
-        for (auto &m : autre.getListeMesures())
-            if (m.getTimestamp() >= dateDebut && m.getTimestamp() <= dateMax)
+        for (Mesure m : autre.getListeMesures())
+            if (m.getTimestamp() >= debut && m.getTimestamp() <= fin)
                 mesuresAutre.push_back(m);
 
-        // 5c) calcul de la distance
-        float somme2 = 0;
-        int nbComm = 0;
-        for (auto &mRef : mesuresRef)
+        // calcul de la somme des écarts-type entre les valeurs du capteur de référence et d'un autre capteur  
+        float sommeDesEcartsType = 0;
+        int nbValeurs = 0;
+        for (Mesure &mRef : mesuresCapteurRefDansIntervalleTemps)
         {
-            for (auto &mAut : mesuresAutre)
+            for (Mesure &mAut : mesuresAutre)
             {
+                // on fait correspondre les gaz et les temps associés au mesures
                 if (mRef.getAttribut().attributId == mAut.getAttribut().attributId && mRef.getTimestamp() == mAut.getTimestamp())
                 {
                     float err = mRef.getValeur() - mAut.getValeur();
-                    somme2 += err * err;
-                    ++nbComm;
+                    sommeDesEcartsType += err * err;
+                    ++nbValeurs;
                     break;
                 }
             }
         }
 
-        if (nbComm > 0)
+        // calcul de la variance (racine de l'écart-type), 
+        // et ajout de cet autre capteur dans la liste des capteurs similaires
+        if (nbValeurs > 0)
         {
-            float dist = sqrt(somme2 / nbComm);
-            capteursSim.emplace_back(autre, dist);
+            float variance = sqrt(sommeDesEcartsType / nbValeurs);
+            capteursSimilaires.emplace_back(autre, variance);
         }
     }
 
-    // 6) tri par distance croissante
-    sort(capteursSim.begin(), capteursSim.end(),
-         [](auto &a, auto &b)
-         { return a.second < b.second; });
+    // tri par variance croissante
+    sort(capteursSimilaires.begin(), capteursSimilaires.end(),
+         [](pair<Capteur, float> &capteurA, pair<Capteur, float> &capteurB)
+         { return capteurA.second < capteurB.second; });
 
-    return capteursSim;
+    return capteursSimilaires;
 }
 
 void Application::ajouterCapteur(Capteur &capteur)

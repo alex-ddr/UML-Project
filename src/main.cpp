@@ -12,7 +12,7 @@ void afficherMenuGouvernement()
     cout << "\nRôle : GOUVERNEMENT" << endl;
     cout << "*1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
     cout << "2. Estimer la qualité de l’air à un point" << endl;
-    cout << "*3. Lister les capteurs similaires" << endl;
+    cout << "*3. Classer les capteurs par similarité par rapport à un capteur de référence" << endl;
     cout << "4. Analyser un capteur privé" << endl;
     cout << "5. Mesurer le temps d’exécution d’un algorithme" << endl;
     cout << "6. Quitter" << endl;
@@ -23,7 +23,7 @@ void afficherMenuUtilisateur()
     cout << "\nRôle : UTILISATEUR" << endl;
     cout << "*1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
     cout << "2. Estimer la qualité de l’air" << endl;
-    cout << "*3. Lister les capteurs similaires" << endl;
+    cout << "*3. Classer les capteurs par similarité par rapport à un capteur de référence" << endl;
     cout << "4. Consulter mes points" << endl;
     cout << "5. Quitter" << endl;
 }
@@ -33,7 +33,7 @@ void afficherMenuAdmin()
     cout << "\nRôle : ADMIN" << endl;
     cout << "*1. Calculer la moyenne de qualité de l’air dans une zone" << endl;
     cout << "2. Estimer la qualité de l’air" << endl;
-    cout << "*3. Lister les capteurs similaires" << endl;
+    cout << "*3. Classer les capteurs par similarité par rapport à un capteur de référence" << endl;
     cout << "4. Analyser un capteur privé" << endl;
     cout << "5. Mesurer le temps d’exécution d’un algorithme" << endl;
     cout << "6. Faire une maintenance" << endl;
@@ -119,6 +119,7 @@ void demanderMoyenneQualiteAir(Application app)
 
 void demanderListerCapteursSimilaires(Application app)
 {
+    // Demander l'identifiant du capteur 
     int capteurId;
     cout << "Entrez l'identifiant du capteur (0 à 99) : ";
     while (!(cin >> capteurId) || capteurId < 0 || capteurId > 99)
@@ -127,15 +128,42 @@ void demanderListerCapteursSimilaires(Application app)
         cin.clear();
     }
 
-    cout << "Capteurs similaires au capteur " << capteurId << " :" << endl;
-    Capteur capteur_choisi = app.trouverCapteurParId(capteurId);
-    for (const auto &cap_mesure : app.listerCapteursSimilaires(capteur_choisi))
+    // Demander la date de début
+    string dateDebut, dateFin;
+    cout << "Entrez la date de début (YYYY-MM-DD HH:MM:SS) : ";
+    cin.ignore();
+    getline(cin, dateDebut);
+    time_t debut = Parser::parseDate(dateDebut);
+    while (debut <= 0)
     {
-        Capteur c = cap_mesure.first;
-        float d = cap_mesure.second;
+        cout << "Date de début invalide. Entrez une date au format YYYY-MM-DD HH:MM:SS : ";
+        getline(cin, dateDebut);
+        debut = Parser::parseDate(dateDebut);
+    }
 
-        cout << c << endl
-             << "Distance : " << d << endl;
+    // Demander la date de fin
+    cout << "Entrez la date de fin (YYYY-MM-DD HH:MM:SS) : ";
+    getline(cin, dateFin);
+    time_t fin = Parser::parseDate(dateFin);
+    while (fin < debut)
+    {
+        cout << "Date de fin invalide. Elle doit être supérieure à la date de début : ";
+        getline(cin, dateFin);
+        fin = Parser::parseDate(dateFin);
+    }
+
+    // Afficher les capteurs par ordre de similarité
+    cout << "Classement des capteurs par similarité par rapport au capteur de référence " << capteurId << " :" << endl;
+    Capteur capteur_ref = app.trouverCapteurParId(capteurId);
+    for (const auto &capteur_mesure : app.listerCapteursSimilaires(capteur_ref, debut, fin))
+    {
+        Capteur c = capteur_mesure.first;
+        float d = capteur_mesure.second;
+
+        cout << endl;
+        cout << "Capteur : " << c.getCapteurId() << endl;
+        cout << "Variance (plus la variance est petite, plus le capteur est similaire) : " << d << endl;
+        
     }
 }
 
