@@ -168,6 +168,19 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
 
 vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur, time_t debut, time_t fin) const
 {
+
+    /* Retourne une liste triée de capteurs similaires à un capteur donné, sur une période spécifiée.
+    Le calcul est basé sur la variance des mesures prises au même moment et pour les mêmes attributs. 
+    
+    Paramètres :
+    - capteur : référence vers le capteur à comparer.
+    - debut : timestamp de début de la période d’analyse.
+    - fin : timestamp de fin de la période d’analyse.
+    
+    Retour :
+    - Un vecteur de paires (Capteur, float), trié par similarité croissante (valeur du float = écart-type).
+    */
+
     // filtrage des mesures du capteur de référence entre debut et fin
     vector<Mesure> mesuresCapteurRef = capteur.getListeMesures();
     vector<Mesure> mesuresCapteurRefDansIntervalleTemps;
@@ -192,7 +205,7 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
                 mesuresAutre.push_back(m);
 
         // calcul de la somme des écarts-type entre les valeurs du capteur de référence et d'un autre capteur
-        float sommeDesEcartsType = 0;
+        float sommeDesVariances = 0;
         int nbValeurs = 0;
         for (Mesure &mRef : mesuresCapteurRefDansIntervalleTemps)
         {
@@ -202,7 +215,7 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
                 if (mRef.getAttribut().attributId == mAut.getAttribut().attributId && mRef.getTimestamp() == mAut.getTimestamp())
                 {
                     float err = mRef.getValeur() - mAut.getValeur();
-                    sommeDesEcartsType += err * err;
+                    sommeDesVariances += err * err;
                     ++nbValeurs;
                     break;
                 }
@@ -213,8 +226,8 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
         // et ajout de cet autre capteur dans la liste des capteurs similaires
         if (nbValeurs > 0)
         {
-            float variance = sqrt(sommeDesEcartsType / nbValeurs);
-            capteursSimilaires.emplace_back(autre, variance);
+            float ecartType = sqrt(sommeDesVariances / nbValeurs);
+            capteursSimilaires.emplace_back(autre, ecartType);
         }
     }
 

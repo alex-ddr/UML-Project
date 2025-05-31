@@ -167,7 +167,7 @@ void demanderListerCapteursSimilaires(Application app)
 
         cout << endl;
         cout << "Capteur : " << c.getCapteurId() << endl;
-        cout << "Variance (plus la variance est petite, plus le capteur est similaire) : " << d << endl;
+        cout << "Ecrat-type (plus il est petit, plus le capteur est similaire) : " << d << endl;
     }
 }
 
