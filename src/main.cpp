@@ -117,7 +117,7 @@ void demanderMoyenneQualiteAir(Application app)
     }
 
     else
-        cout << "Aucun capteur trouvé dans ce périmètre et pour cette période. Les valeurs ci-dessous ne sont pas à considérer. " << endl;
+        cout << "Aucun capteur trouvé dans ce périmètre et pour cette période. " << endl;
 
     cout << "\n----------------------------------------\n\n";
 }
@@ -174,7 +174,7 @@ void demanderListerCapteursSimilaires(Application app)
 int main()
 {
     Application app = Application();
-    if (!app.chargerDonnees("./data/sensors.csv", "./data/users.csv", "./data/attributes.csv", "./data/measurements.csv"))
+    if (!app.chargerDonnees("../data/sensors.csv", "../data/users.csv", "../data/attributes.csv", "../data/measurements.csv"))
         cout << "Erreur au chargement des données." << endl;
 
     string role;

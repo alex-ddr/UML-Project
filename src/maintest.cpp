@@ -151,10 +151,12 @@ int main()
 
   // Chargement de la base de données
   Application app;
-  app.chargerDonnees("./data/sensors.csv", "./data/users.csv", "./data/attributes.csv", "./data/measurements.csv");
+  app.chargerDonnees("../data/sensors.csv", "../data/users.csv", "../data/attributes.csv", "../data/measurements.csv");
   // Test sur toute la base de données
-  runTest("Test toute la bdd", app, app.getListeTousLesCapteurs().front());
-  printf("premier capteur : %s\n", app.getListeTousLesCapteurs().front().getCapteurId().c_str());
+  // test sur lister capteurs similaires sur toute la base de données
+  Capteur ref = app.getListeTousLesCapteurs().front();
+  runTest("Test sur toute la base de données", app, ref);
+
   cout << "----------------------------------------\n";
   cout << "Tests de moyenneQualiteAir\n";
   cout << "----------------------------------------\n";
@@ -180,7 +182,7 @@ int main()
     }
 
     else
-      cout << "Aucun capteur trouvé dans ce périmètre et pour cette période. Les valeurs ci-dessous ne sont pas à considérer. " << endl;
+      cout << "Aucun capteur trouvé dans ce périmètre et pour cette période. " << endl;
 
     cout << "\n----------------------------------------\n\n";
   };
