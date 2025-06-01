@@ -26,7 +26,7 @@ class Utilisateur : public Personne
         void setPoints(const long& points) {this->points=points;}
 
         // Methodes
-        void consulterPoints() const {std::cout << "L'utilisateur a " << points << " points." << std::endl;}
+        void consulterPoints() const {std::cout << "Vous avez " << points << " points." << std::endl;}
 };
 
 #endif

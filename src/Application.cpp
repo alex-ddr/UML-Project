@@ -4,10 +4,14 @@
 #include <cmath>
 #include <map>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 #include <cmath>
 #include "Application.h"
 #include "Mesure.h"
 #include "Parser.h"
+#include "Personne.h"
+#include "Utilisateur.h"
 using namespace std;
 
 bool Application::chargerDonnees(const std::string &cheminFichierSensors, const string &cheminFichierUsers, const std::string &cheminFichierAttributs, const string &cheminFichierMesures)
@@ -15,7 +19,8 @@ bool Application::chargerDonnees(const std::string &cheminFichierSensors, const 
 
     listeTousLesCapteurs = Parser::chargerCapteurs(cheminFichierSensors, cheminFichierUsers);
     Parser ::chargerMesures(cheminFichierMesures, cheminFichierAttributs, listeTousLesCapteurs);
-
+    listeUtilisateurs = chargerUtilisateurs(cheminFichierUsers);
+    
     if (listeTousLesCapteurs.empty())
         return false;
     return true;
@@ -73,7 +78,7 @@ Capteur Application::trouverCapteurParId(int id)
     return return_cap;
 }
 
-map<string, int> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) const
+map<string, int> Application::moyenneQualiteAir(float latitude, float longitude, time_t debut, time_t fin, float perimetre) 
 {
     /*
     Calcule la moyenne de la qualité de l'air pour différents gaz sur une période donnée et dans une zone géographique.
@@ -135,6 +140,7 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
             }
         }
 
+        bool capteurUtile = false;
         for (int i = 0; i < 4; ++i)
         {
             if (nbMesures[i] > 0)
@@ -142,8 +148,23 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
                 moyennes[i] /= nbMesures[i];
                 moyennesTotales[i] += moyennes[i];
                 ++nbCapteurs[i];
+                capteurUtile=true;
             }
         }
+
+        if (capteurUtile && c.isPrive()) {
+            // on parcours la liste des utilisateurs et de leur capteurs pour rechercher à qui appartient le capteur 
+            for (Utilisateur &u : listeUtilisateurs) {
+                for (const Capteur &cUtilisateur : u.getListeCapteursPersonne()) {
+                    // on l'a trouvé => on lui ajoute un point
+                    if (cUtilisateur == c) {
+                        ajouterPointUtilisateur(u);
+                        break; // on sort dès qu’on a trouvé
+                    }
+                }
+            }
+        }
+
     }
     bool capteurs_touves = false;
     // Enfin, la moyenne finale par gaz (moyenne des moyennes de tous les capteurs)
@@ -155,7 +176,6 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
             capteurs_touves = true;
         }
         moyennesParGaz[gaz[i]] = moyennesTotales[i];
-        // cout << "moyennesParGaz pour gaz " << i << " " << moyennesTotales[i] << endl;
     }
 
     if (capteurs_touves == false)
@@ -252,10 +272,60 @@ void Application::ajouterCapteur(Capteur &capteur)
     return;
 }
 
+
+int extraireNumeroCapteur(const string& capteurId) {
+    string chiffres;
+    for (char c : capteurId) {
+        if (isdigit(c)) {
+            chiffres += c;
+        }
+    }
+    return chiffres.empty() ? -1 : stoi(chiffres);
+}
+
+
+vector<Utilisateur> Application::chargerUtilisateurs(const string& cheminFichier) {
+    vector<Utilisateur> utilisateurs;
+    ifstream fichier(cheminFichier);
+    string ligne;
+
+    if (!fichier.is_open()) {
+        cerr << "Erreur : impossible d'ouvrir le fichier " << cheminFichier << endl;
+        return utilisateurs;
+    }
+
+    while (getline(fichier, ligne)) {
+        stringstream ss(ligne);
+        string userId, capteurId;
+
+        getline(ss, userId, ';');
+        getline(ss, capteurId, ';');
+
+        int numero = extraireNumeroCapteur(capteurId); 
+        Capteur capteur = trouverCapteurParId(numero);  // Tu dois avoir cette méthode dans Application
+
+        // Création d'une liste de capteurs pour le constructeur
+        vector<Capteur> capteurs = { capteur };
+
+        // Création de l'utilisateur
+        Utilisateur utilisateur(userId, "mdp", 0, capteurs);  // "mdp" et 0 à adapter
+
+        utilisateurs.push_back(utilisateur);
+    }
+
+    fichier.close();
+    return utilisateurs;
+}
+
+void Application::ajouterPointUtilisateur(Utilisateur &user) const {
+    user.setPoints(user.getPoints()+1);
+    return;
+}
+
+
 // On met ici les méthodes déclarées dans le .h
 /*
 float Application::estimerQualiteAir(float latitude, float longitude) const {}
-void Application::ajouterPointUtilisateur(Utilisateur &user) const {}
 void Application::analyserCapteurPrive() const {}
 void Application::mesurerAlgorithme() const {}
 void Application::faireMaintenance() {}
