@@ -16,7 +16,7 @@ void afficherMenuGouvernement()
     cout << "2. Estimer la qualité de l’air à un point" << endl;
     cout << "*3. Classer les capteurs par similarité par rapport à un capteur de référence" << endl;
     cout << "4. Analyser un capteur privé" << endl;
-    cout << "*5. Mesurer le temps d’exécution d’un algorithme" << endl;
+    cout << "5. Mesurer le temps d’exécution d’un algorithme" << endl;
     cout << "*6. Quitter" << endl;
     cout << "*7. Retour en arrière" << endl;
     
@@ -40,7 +40,7 @@ void afficherMenuAdmin()
     cout << "2. Estimer la qualité de l’air" << endl;
     cout << "*3. Classer les capteurs par similarité par rapport à un capteur de référence" << endl;
     cout << "4. Analyser un capteur privé" << endl;
-    cout << "*5. Mesurer le temps d’exécution d’un algorithme" << endl;
+    cout << "5. Mesurer le temps d’exécution d’un algorithme" << endl;
     cout << "6. Faire une maintenance" << endl;
     cout << "*7. Quitter" << endl;
     cout << "*8. Retour en arrière" << endl;

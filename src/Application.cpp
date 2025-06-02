@@ -186,7 +186,7 @@ map<string, int> Application::moyenneQualiteAir(float latitude, float longitude,
     return calculerIndicesATMO(moyennesParGaz);
 }
 
-vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur, time_t debut, time_t fin) const
+vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capteur, time_t debut, time_t fin) 
 {
 
     /* Retourne une liste triée de capteurs similaires à un capteur donné, sur une période spécifiée.
@@ -242,6 +242,23 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
             }
         }
 
+
+        // ajout d'un point aux capteurs privés. 
+        // Comme l'algo utilise toutes les mesures, on aujoute d'office un point au capteur
+        if (autre.isPrive()) {
+            // on parcours la liste des utilisateurs et de leur capteurs pour rechercher à qui appartient le capteur 
+            for (Utilisateur &u : listeUtilisateurs) {
+                for (const Capteur &cUtilisateur : u.getListeCapteursPersonne()) {
+                    // on l'a trouvé => on lui ajoute un point
+                    if (cUtilisateur == autre) {
+                        ajouterPointUtilisateur(u);
+                        break; // on sort dès qu’on a trouvé
+                    }
+                }
+            }
+        }
+
+
         // calcul de la variance (racine de l'écart-type),
         // et ajout de cet autre capteur dans la liste des capteurs similaires
         if (nbValeurs > 0)
@@ -255,6 +272,8 @@ vector<pair<Capteur, float>> Application::listerCapteursSimilaires(Capteur &capt
     sort(capteursSimilaires.begin(), capteursSimilaires.end(),
          [](pair<Capteur, float> &capteurA, pair<Capteur, float> &capteurB)
          { return capteurA.second < capteurB.second; });
+
+    
 
     return capteursSimilaires;
 }
@@ -323,7 +342,7 @@ void Application::ajouterPointUtilisateur(Utilisateur &user) const {
 }
 
 
-// On met ici les méthodes déclarées dans le .h
+// ici les méthodes déclarées dans le .h
 /*
 float Application::estimerQualiteAir(float latitude, float longitude) const {}
 void Application::analyserCapteurPrive() const {}
