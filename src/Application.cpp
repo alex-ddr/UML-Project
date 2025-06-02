@@ -340,13 +340,3 @@ void Application::ajouterPointUtilisateur(Utilisateur &user) const {
     user.setPoints(user.getPoints()+1);
     return;
 }
-
-
-// ici les méthodes déclarées dans le .h
-/*
-float Application::estimerQualiteAir(float latitude, float longitude) const {}
-void Application::analyserCapteurPrive() const {}
-void Application::mesurerAlgorithme() const {}
-void Application::faireMaintenance() {}
-void Application::remplirCapteur() {}
-Personne Application::authentifier(string identifiant, string mdp) {}*/
