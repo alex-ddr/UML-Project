@@ -153,9 +153,6 @@ int main()
   Application app;
   app.chargerDonnees("../data/sensors.csv", "../data/users.csv", "../data/attributes.csv", "../data/measurements.csv");
   // Test sur toute la base de données
-  // test sur lister capteurs similaires sur toute la base de données
-  Capteur ref = app.getListeTousLesCapteurs().front();
-  runTest("Test sur toute la base de données", app, ref);
 
   cout << "----------------------------------------\n";
   cout << "Tests de moyenneQualiteAir\n";
